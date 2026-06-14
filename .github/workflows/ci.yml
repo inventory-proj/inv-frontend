@@ -1,0 +1,21 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    # Идем в тот же самый инфраструктурный репозиторий!
+    uses: inventory-proj/inv-infra/.github/workflows/docker-build-template.yml@main
+    with:
+      image_name: "inv-frontend" # <--- Указали новое имя образа
+      context_dir: "."
+    secrets:
+      REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
