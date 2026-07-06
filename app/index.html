@@ -24,7 +24,7 @@
     </script>
     <style>
         body {
-            background-color: #f8fafc; /* Светлый фон */
+            background-color: #f8fafc; /* Светлый фон (slate-50) */
             color: #0f172a;
             min-height: 100vh;
             font-family: 'Inter', system-ui, sans-serif;
@@ -36,7 +36,7 @@
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(226, 232, 240, 0.8);
-            box-shadow: 0 10px 40px -10px rgba(148, 163, 184, 0.2);
+            box-shadow: 0 10px 40px -10px rgba(148, 163, 184, 0.1);
         }
 
         .glass-modal-overlay {
@@ -69,38 +69,38 @@
 
         /* "Неоновые" кнопки в светлой теме */
         .btn-neon-blue {
-            border: 1px solid #3b82f6; color: #2563eb; background: #ffffff;
+            border: 1.5px solid #3b82f6; color: #2563eb; background: #ffffff;
             transition: all 0.2s ease;
         }
         .btn-neon-blue:hover {
-            background: #eff6ff; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); text-shadow: 0 0 1px rgba(59,130,246,0.3);
+            background: #eff6ff; box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
             border-color: #2563eb;
         }
         
         .btn-neon-green {
-            border: 1px solid #10b981; color: #059669; background: #ffffff;
+            border: 1.5px solid #10b981; color: #059669; background: #ffffff;
             transition: all 0.2s ease;
         }
         .btn-neon-green:hover {
-            background: #ecfdf5; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); text-shadow: 0 0 1px rgba(16,185,129,0.3);
+            background: #ecfdf5; box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
             border-color: #059669;
         }
 
         .btn-neon-red {
-            border: 1px solid #f43f5e; color: #e11d48; background: #ffffff;
+            border: 1.5px solid #f43f5e; color: #e11d48; background: #ffffff;
             transition: all 0.2s ease;
         }
         .btn-neon-red:hover {
-            background: #fff1f2; box-shadow: 0 0 15px rgba(244, 63, 94, 0.4); text-shadow: 0 0 1px rgba(244,63,94,0.3);
+            background: #fff1f2; box-shadow: 0 0 12px rgba(244, 63, 94, 0.4);
             border-color: #e11d48;
         }
         
         .btn-neon-amber {
-            border: 1px solid #f59e0b; color: #d97706; background: #ffffff;
+            border: 1.5px solid #f59e0b; color: #d97706; background: #ffffff;
             transition: all 0.2s ease;
         }
         .btn-neon-amber:hover {
-            background: #fffbeb; box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); text-shadow: 0 0 1px rgba(245, 158, 11, 0.3);
+            background: #fffbeb; box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
             border-color: #d97706;
         }
 
@@ -115,9 +115,9 @@
 
     <!-- Светлые фоновые градиенты -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none -z-20">
-        <div class="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-300/40 rounded-full mix-blend-multiply filter blur-[100px] animate-blob"></div>
-        <div class="absolute top-[20%] right-[-10%] w-[500px] h-[500px] bg-purple-300/30 rounded-full mix-blend-multiply filter blur-[100px] animate-blob" style="animation-delay: 2s;"></div>
-        <div class="absolute bottom-[-20%] left-[20%] w-[700px] h-[700px] bg-emerald-200/40 rounded-full mix-blend-multiply filter blur-[100px] animate-blob" style="animation-delay: 4s;"></div>
+        <div class="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-300/30 rounded-full mix-blend-multiply filter blur-[100px] animate-blob"></div>
+        <div class="absolute top-[20%] right-[-10%] w-[500px] h-[500px] bg-emerald-300/30 rounded-full mix-blend-multiply filter blur-[100px] animate-blob" style="animation-delay: 2s;"></div>
+        <div class="absolute bottom-[-20%] left-[20%] w-[700px] h-[700px] bg-purple-200/40 rounded-full mix-blend-multiply filter blur-[100px] animate-blob" style="animation-delay: 4s;"></div>
     </div>
 
     <!-- УНИВЕРСАЛЬНАЯ МОДАЛКА УВЕДОМЛЕНИЙ -->
@@ -214,7 +214,8 @@
                     <h2 class="text-3xl font-bold text-slate-800 mb-2 tracking-tight">Рабочие пространства</h2>
                     <p class="text-slate-500 text-sm">Организуйте серверы по проектам и управляйте доступом.</p>
                 </div>
-                <button onclick="openModal('create-group-modal')" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl font-semibold shadow-md shadow-blue-500/20 transition-all flex items-center gap-2">
+                <!-- Кнопка "Новая группа" (Синий неон) -->
+                <button onclick="openModal('create-group-modal')" class="btn-neon-blue px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-sm">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
                     Новая группа
                 </button>
@@ -342,7 +343,7 @@
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">@</span>
                     <input type="text" id="invite-username" class="w-full bg-white border border-slate-300 rounded-xl pl-8 pr-4 py-3 text-slate-900 focus:outline-none focus:border-emerald-500" placeholder="username">
                 </div>
-                <button id="btn-invite" onclick="inviteColleague()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 rounded-xl transition-all shadow-md">Найти</button>
+                <button id="btn-invite" onclick="inviteColleague()" class="bg-emerald-500 hover:bg-emerald-400 text-white font-bold px-6 rounded-xl transition-all shadow-md">Найти</button>
             </div>
             <div id="invite-link-container" class="hidden mt-6 bg-emerald-50 p-4 rounded-xl border border-emerald-100">
                 <p class="text-emerald-700 text-sm font-semibold mb-3">✅ Пользователь добавлен! Ссылка-приглашение:</p>
@@ -522,13 +523,13 @@
                                     <td class="px-6 py-4 font-mono text-slate-500">${s.ip_address}</td>
                                     <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-md text-xs font-bold border ${badgeClass}">${s.status.toUpperCase()}</span></td>
                                     <td class="px-6 py-4 text-right">
-                                        <div class="flex items-center justify-end gap-1.5">
-                                            <button onclick="stopProp(event); viewMonitoring('${esc(s.hostname)}')" class="flex items-center gap-1.5 btn-neon-blue px-3 py-1.5 rounded-lg text-xs font-bold" title="Метрики и Логи">${iconLog} Логи</button>
-                                            <button onclick="stopProp(event); showAgentCommand('${s.agent_token}')" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all" title="Команда агента">${iconAgent} Агент</button>
+                                        <div class="flex items-center justify-end gap-1.5" onclick="stopProp(event)">
+                                            <button onclick="viewMonitoring('${esc(s.hostname)}')" class="flex items-center gap-1.5 btn-neon-blue px-3 py-1.5 rounded-lg text-xs font-bold" title="Метрики и Логи">${iconLog} Логи</button>
+                                            <button onclick="showAgentCommand('${s.agent_token}')" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all" title="Команда агента">${iconAgent} Агент</button>
                                             <div class="w-px h-4 bg-slate-200 mx-1"></div>
-                                            <button onclick="stopProp(event); openMoveModal(${s.id}, ${ws.id})" class="p-1.5 btn-neon-amber rounded-lg" title="Переместить">${iconMove}</button>
-                                            <button onclick="stopProp(event); openRenameServerModal(${s.id}, '${esc(s.hostname)}')" class="p-1.5 btn-neon-blue rounded-lg" title="Изменить имя">${iconEdit}</button>
-                                            <button onclick="stopProp(event); deleteServer(${s.id}, '${esc(s.hostname)}')" class="p-1.5 btn-neon-red rounded-lg" title="Удалить">${iconTrash}</button>
+                                            <button onclick="openMoveModal(${s.id}, ${ws.id})" class="p-1.5 btn-neon-amber rounded-lg" title="Переместить">${iconMove}</button>
+                                            <button onclick="openRenameServerModal(${s.id}, '${esc(s.hostname)}')" class="p-1.5 btn-neon-blue rounded-lg" title="Изменить имя">${iconEdit}</button>
+                                            <button onclick="deleteServer(${s.id}, '${esc(s.hostname)}')" class="p-1.5 btn-neon-red rounded-lg" title="Удалить">${iconTrash}</button>
                                         </div>
                                     </td>
                                 </tr>`;
@@ -551,9 +552,9 @@
                                     <div class="mt-2 flex flex-wrap gap-2">${membersHtml}</div>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-3 w-full md:w-auto">
-                                ${ws.is_owner ? `<button onclick="stopProp(event); openInviteModal(${ws.id})" class="flex-1 md:flex-none btn-neon-green px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg> Добавить юзера</button>` : ''}
-                                <button onclick="stopProp(event); openAddServerModal(${ws.id})" class="flex-1 md:flex-none btn-neon-blue px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg> Добавить сервер</button>
+                            <div class="flex items-center gap-3 w-full md:w-auto" onclick="stopProp(event)">
+                                ${ws.is_owner ? `<button onclick="openInviteModal(${ws.id})" class="flex-1 md:flex-none btn-neon-green px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg> Добавить юзера</button>` : ''}
+                                <button onclick="openAddServerModal(${ws.id})" class="flex-1 md:flex-none btn-neon-blue px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg> Добавить сервер</button>
                             </div>
                         </div>
                         
@@ -620,13 +621,13 @@
             setBtnLoading('btn-invite', true);
             const res = await fetch(`${API_URL}/team/invite`, { method: 'POST', headers: getHeaders(), body: JSON.stringify({username: u, workspace_id: parseInt(wsId)}) });
             setBtnLoading('btn-invite', false);
+            const data = await res.json();
             if (res.ok) {
-                const data = await res.json();
                 document.getElementById('invite-username').value = '';
                 document.getElementById('invite-link-text').innerText = data.invite_link;
                 document.getElementById('invite-link-container').classList.remove('hidden');
                 loadDashboard();
-            } else showInfo('Ошибка', (await res.json()).detail);
+            } else showInfo('Ошибка', data.detail);
         }
 
         // --- SERVERS ---
