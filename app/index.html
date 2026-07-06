@@ -2,84 +2,103 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Server Inventory & Management</title>
+    <title>SaaS Server Monitoring</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background-color: #f8f9fa; }
-        .card { border: none; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .hidden { display: none !important; }
-        .navbar { box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        
+        .glass-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            display: flex; justify-content: center; align-items: center; z-index: 1050;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .glass-modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .glass-modal-content {
+            background: white; padding: 2rem; border-radius: 16px; width: 100%; max-width: 500px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: translateY(-20px); transition: transform 0.3s ease;
+        }
+        .glass-modal-overlay.active .glass-modal-content { transform: translateY(0); }
+        
+        .code-block { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 8px; font-family: monospace; word-break: break-all; }
+        .nav-tabs .nav-link { cursor: pointer; color: #6c757d; }
+        .nav-tabs .nav-link.active { font-weight: bold; color: #0d6efd; }
+        .btn:disabled { cursor: not-allowed; opacity: 0.7; }
+        
+        /* Стили для ссылки инвайта */
+        .invite-link-box { background: #e9ecef; border: 1px dashed #6c757d; border-radius: 8px; padding: 10px; font-family: monospace; font-size: 0.9rem; word-break: break-all; }
     </style>
 </head>
 <body>
 
-    <div id="login-screen" class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
-        <div class="card p-5" style="width: 400px;">
-            <h3 class="text-center mb-4 text-primary fw-bold">Вход в систему</h3>
-            <div id="login-error" class="alert alert-danger hidden text-center p-2"></div>
-            <input type="text" id="username" class="form-control mb-3" placeholder="Логин">
-            <input type="password" id="password" class="form-control mb-4" placeholder="Пароль">
-            <button class="btn btn-primary w-100 fw-bold" onclick="login()">Войти</button>
+    <!-- УНИВЕРСАЛЬНАЯ МОДАЛКА ОШИБОК -->
+    <div id="info-modal" class="glass-modal-overlay" style="z-index: 1100;">
+        <div class="glass-modal-content" style="max-width: 350px; text-align: center;">
+            <h5 id="info-title" class="fw-bold mb-3">Внимание</h5>
+            <p id="info-msg" class="text-muted mb-4"></p>
+            <button class="btn btn-primary w-100 fw-bold" onclick="closeInfoModal()">Понятно</button>
         </div>
     </div>
 
+    <!-- АВТОРИЗАЦИЯ -->
+    <div id="auth-screen" class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+        <div class="card p-4" style="width: 400px;">
+            <h3 class="text-center mb-3 text-primary fw-bold">SaaS Monitor</h3>
+            
+            <ul class="nav nav-tabs mb-4 d-flex w-100">
+                <li class="nav-item flex-fill text-center"><a class="nav-link active" id="tab-login" onclick="switchAuthTab('login')">Вход</a></li>
+                <li class="nav-item flex-fill text-center"><a class="nav-link" id="tab-register" onclick="switchAuthTab('register')">Регистрация</a></li>
+            </ul>
+            
+            <div id="form-login">
+                <input type="email" id="login-email" class="form-control mb-3" placeholder="Email">
+                <input type="password" id="login-password" class="form-control mb-4" placeholder="Пароль">
+                <button id="btn-login" class="btn btn-primary w-100 fw-bold" onclick="login()">Войти</button>
+            </div>
+
+            <div id="form-register" class="hidden">
+                <input type="text" id="reg-username" class="form-control mb-3" placeholder="Никнейм (только латиница и цифры)">
+                <input type="email" id="reg-email" class="form-control mb-3" placeholder="Ваш Email">
+                <input type="password" id="reg-password" class="form-control mb-4" placeholder="Придумайте пароль">
+                <button id="btn-register" class="btn btn-success w-100 fw-bold" onclick="register()">Создать аккаунт</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ГЛАВНЫЙ ЭКРАН -->
     <div id="app-screen" class="hidden">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-            <div class="container-fluid">
-                <a class="navbar-brand fw-bold" href="#">Inventory System</a>
-                <div class="d-flex align-items-center gap-3">
-                    <span class="text-light" id="user-greeting"></span>
-                    <span class="badge bg-primary" id="user-role-badge"></span>
+            <div class="container-fluid px-4">
+                <a class="navbar-brand fw-bold text-primary" href="#">SaaS Monitor</a>
+                <div class="ms-auto d-flex align-items-center gap-3">
+                    <button class="btn btn-outline-info btn-sm fw-bold" onclick="openTeamModal()">
+                        Моя команда <span class="badge bg-info text-dark ms-1" id="team-count">0</span>
+                    </button>
+                    <span class="text-light ms-3 fw-bold" id="user-greeting"></span>
                     <button class="btn btn-outline-light btn-sm" onclick="logout()">Выйти</button>
                 </div>
             </div>
         </nav>
 
         <div class="container-fluid px-4">
-            
-            <div id="admin-panel" class="row mb-4 hidden">
-                <div class="col-md-6">
-                    <div class="card p-3 h-100 border-start border-primary border-4">
-                        <h5 class="fw-bold mb-3 text-secondary">Управление серверами</h5>
-                        <div class="d-flex gap-2">
-                            <input type="text" id="new-host" class="form-control" placeholder="Hostname">
-                            <input type="text" id="new-ip" class="form-control" placeholder="IP">
-                            <input type="number" id="new-cluster" class="form-control" placeholder="Cluster ID (1-3)">
-                            <button class="btn btn-primary px-4" onclick="createServer()">Создать</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card p-3 h-100 border-start border-warning border-4">
-                        <h5 class="fw-bold mb-3 text-secondary">Безопасность и Данные</h5>
-                        <div class="d-flex gap-2 w-100">
-                            <input type="text" id="new-user" class="form-control form-control-sm" placeholder="Логин">
-                            <input type="password" id="new-pass" class="form-control form-control-sm" placeholder="Пароль">
-                            <select id="new-role" class="form-select form-select-sm w-auto">
-                                <option value="1">Admin</option>
-                                <option value="3">Viewer</option>
-                            </select>
-                            <button class="btn btn-sm btn-dark" onclick="createUser()">+Юзер</button>
-                        </div>
-                        <div class="mt-3">
-                            <button class="btn btn-sm btn-info w-100 text-white fw-bold" onclick="exportData()">Скачать бэкап (JSON)</button>
-                        </div>
-                    </div>
+            <div id="global-admin-panel" class="card p-3 mb-4 border-start border-danger border-4 hidden">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="m-0 text-danger fw-bold">SuperAdmin Panel</h5>
+                    <button class="btn btn-sm btn-danger fw-bold" onclick="exportData()">Скачать Backup БД</button>
                 </div>
             </div>
 
             <div class="card p-4">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="fw-bold m-0">Реестр серверов</h4>
-                    <select id="sort-order" class="form-select w-auto" onchange="loadServers()">
-                        <option value="asc">Сортировка: по возрастанию ID</option>
-                        <option value="desc">Сортировка: по убыванию ID</option>
-                    </select>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold m-0">Мои серверы</h4>
+                    <button class="btn btn-primary fw-bold px-4" onclick="openAddServerModal()">+ Добавить сервер</button>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
-                            <tr><th>ID</th><th>Хостнейм</th><th>IP</th><th>Кластер</th><th>Статус</th><th id="actions-header" class="hidden">Действия</th></tr>
+                            <tr><th>ID</th><th>Хостнейм</th><th>IP Адрес</th><th>Статус</th><th>Токен агента</th></tr>
                         </thead>
                         <tbody id="servers-table"></tbody>
                     </table>
@@ -88,123 +107,288 @@
         </div>
     </div>
 
+    <!-- МОДАЛКА: Добавление сервера -->
+    <div id="add-server-modal" class="glass-modal-overlay">
+        <div class="glass-modal-content">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold m-0" id="modal-title">Добавление сервера</h4>
+                <button type="button" class="btn-close" onclick="closeModal('add-server-modal')"></button>
+            </div>
+            
+            <div id="modal-step-1">
+                <input type="text" id="new-host" class="form-control mb-3" placeholder="Название (например: web-prod-01)">
+                <input type="text" id="new-ip" class="form-control mb-4" placeholder="IP Адрес">
+                <button id="btn-create-server" class="btn btn-primary w-100 fw-bold" onclick="createServer()">Создать и получить токен</button>
+            </div>
+
+            <div id="modal-step-2" class="hidden">
+                <div class="alert alert-success text-center fw-bold">Сервер зарегистрирован!</div>
+                <p>Выполните на сервере от имени <b>root</b>:</p>
+                <div class="code-block mb-3" id="install-command"></div>
+                <button class="btn btn-secondary w-100 fw-bold mb-2" onclick="copyText('install-command', 'Команда скопирована!')">Скопировать</button>
+                <button class="btn btn-outline-dark w-100" onclick="closeModal('add-server-modal')">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА: Команда -->
+    <div id="team-modal" class="glass-modal-overlay">
+        <div class="glass-modal-content">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold m-0">Моя команда</h4>
+                <button type="button" class="btn-close" onclick="closeModal('team-modal')"></button>
+            </div>
+            
+            <div class="mb-4">
+                <label class="form-label text-muted small fw-bold">Добавить коллегу по никнейму</label>
+                <div class="d-flex gap-2 mb-2">
+                    <input type="text" id="invite-username" class="form-control" placeholder="@username">
+                    <button id="btn-invite" class="btn btn-success fw-bold" onclick="inviteColleague()">Найти</button>
+                </div>
+                <!-- Блок для отображения ссылки-приглашения -->
+                <div id="invite-link-container" class="hidden mt-3">
+                    <p class="text-success small fw-bold mb-1">Пользователь добавлен! Отправьте ему ссылку:</p>
+                    <div class="d-flex gap-2">
+                        <div class="invite-link-box flex-fill text-muted" id="invite-link-text"></div>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="copyText('invite-link-text', 'Ссылка скопирована!')">Копировать</button>
+                    </div>
+                </div>
+            </div>
+
+            <label class="form-label text-muted small fw-bold">Участники группы</label>
+            <ul class="list-group" id="team-list"></ul>
+        </div>
+    </div>
+
     <script>
-        function checkAuth() {
-            const token = localStorage.getItem('token');
-            if (token) {
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('app-screen').classList.remove('hidden');
-                document.getElementById('user-greeting').innerText = `Привет, ${localStorage.getItem('username')}!`;
-                document.getElementById('user-role-badge').innerText = localStorage.getItem('role').toUpperCase();
-                
-                // ИСПРАВЛЕН БАГ: Жестко скрываем панель для обычных юзеров
-                if (localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'devops') {
-                    document.getElementById('admin-panel').classList.remove('hidden');
-                    document.getElementById('actions-header').classList.remove('hidden');
-                } else {
-                    document.getElementById('admin-panel').classList.add('hidden');
-                    document.getElementById('actions-header').classList.add('hidden');
-                }
-                loadServers();
+        const API_URL = '/api';
+
+        function showInfo(title, msg) {
+            document.getElementById('info-title').innerText = title;
+            document.getElementById('info-msg').innerText = msg;
+            document.getElementById('info-modal').classList.add('active');
+        }
+        function closeInfoModal() { document.getElementById('info-modal').classList.remove('active'); }
+        
+        function setButtonLoading(btnId, isLoading, originalText = '') {
+            const btn = document.getElementById(btnId);
+            if (isLoading) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Загрузка...';
             } else {
-                document.getElementById('login-screen').classList.remove('hidden');
-                document.getElementById('app-screen').classList.add('hidden');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        function copyText(elementId, successMsg) {
+            const text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text).then(() => { showInfo("Успех", successMsg); }).catch(err => {
+                // Фолбэк, если clipboard API заблокирован (например в iframe)
+                const tempTextArea = document.createElement("textarea");
+                tempTextArea.value = text;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempTextArea);
+                showInfo("Успех", successMsg);
+            });
+        }
+
+        function switchAuthTab(tab) {
+            if (tab === 'login') {
+                document.getElementById('tab-login').classList.add('active');
+                document.getElementById('tab-register').classList.remove('active');
+                document.getElementById('form-login').classList.remove('hidden');
+                document.getElementById('form-register').classList.add('hidden');
+            } else {
+                document.getElementById('tab-register').classList.add('active');
+                document.getElementById('tab-login').classList.remove('active');
+                document.getElementById('form-register').classList.remove('hidden');
+                document.getElementById('form-login').classList.add('hidden');
             }
         }
 
         async function login() {
-            const u = document.getElementById('username').value;
-            const p = document.getElementById('password').value;
-            const res = await fetch('/api/login', {
+            const e = document.getElementById('login-email').value;
+            const p = document.getElementById('login-password').value;
+            if(!e || !p) return showInfo('Ошибка', "Заполните все поля");
+
+            setButtonLoading('btn-login', true);
+            const res = await fetch(`${API_URL}/login`, {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({username: u, password: p})
+                body: JSON.stringify({email: e, password: p})
             });
+            setButtonLoading('btn-login', false, 'Войти');
+
+            if (res.ok) { saveAuth(await res.json()); } 
+            else { showInfo('Ошибка входа', "Неверная почта или пароль"); }
+        }
+
+        async function register() {
+            const u = document.getElementById('reg-username').value.trim();
+            const e = document.getElementById('reg-email').value;
+            const p = document.getElementById('reg-password').value;
+            
+            // Базовая UI валидация
+            if(!u || !e || !p) return showInfo('Ошибка', "Заполните все поля");
+            if(!/^[a-zA-Z0-9_]{3,30}$/.test(u.replace('@',''))) {
+                return showInfo('Ошибка', "Никнейм должен быть от 3 до 30 символов, только латиница, цифры и _");
+            }
+
+            setButtonLoading('btn-register', true);
+            const res = await fetch(`${API_URL}/users`, {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username: u.replace('@',''), email: e, password: p})
+            });
+            setButtonLoading('btn-register', false, 'Создать аккаунт');
+
             if (res.ok) {
-                const data = await res.json();
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('role', data.role);
-                localStorage.setItem('username', data.username);
-                document.getElementById('username').value = '';
-                document.getElementById('password').value = '';
-                document.getElementById('login-error').classList.add('hidden');
-                checkAuth();
+                document.getElementById('login-email').value = e;
+                document.getElementById('login-password').value = p;
+                showInfo('Успех', 'Регистрация прошла успешно! Выполняем вход...');
+                setTimeout(login, 1500);
             } else {
-                document.getElementById('login-error').innerText = "Неверный логин или пароль";
-                document.getElementById('login-error').classList.remove('hidden');
+                const data = await res.json();
+                showInfo('Ошибка', data.detail || "Произошла ошибка");
             }
         }
 
-        function logout() {
-            localStorage.clear();
+        function saveAuth(data) {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('role', data.role);
+            localStorage.setItem('username', data.username);
             checkAuth();
         }
 
-        function getHeaders() {
-            return { 'Authorization': `Bearer ${localStorage.getItem('token')}`, 'Content-Type': 'application/json' };
+        function logout() { localStorage.clear(); checkAuth(); }
+
+        async function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (token && token !== "undefined") {
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('app-screen').classList.remove('hidden');
+                document.getElementById('user-greeting').innerText = `@${localStorage.getItem('username')}`;
+                
+                if (localStorage.getItem('role') === 'global_admin') {
+                    document.getElementById('global-admin-panel').classList.remove('hidden');
+                }
+                loadServers();
+                loadTeamCount();
+            } else {
+                document.getElementById('auth-screen').classList.remove('hidden');
+                document.getElementById('app-screen').classList.add('hidden');
+            }
+        }
+
+        function getHeaders() { return { 'Authorization': `Bearer ${localStorage.getItem('token')}`, 'Content-Type': 'application/json' }; }
+
+        async function loadTeamCount() {
+            const res = await fetch(`${API_URL}/team`, { headers: getHeaders() });
+            if (res.ok) {
+                const team = await res.json();
+                document.getElementById('team-count').innerText = team.length;
+            }
+        }
+
+        async function openTeamModal() {
+            const res = await fetch(`${API_URL}/team`, { headers: getHeaders() });
+            if (!res.ok) return showInfo("Ошибка", "Не удалось загрузить команду");
+            
+            const team = await res.json();
+            const list = document.getElementById('team-list');
+            list.innerHTML = '';
+            team.forEach(u => {
+                const isMe = u.username === localStorage.getItem('username') ? '<span class="badge bg-secondary ms-auto">Вы</span>' : '';
+                list.innerHTML += `<li class="list-group-item d-flex align-items-center fw-bold">@${u.username} <span class="ms-2 fw-normal text-muted small">(${u.email})</span> ${isMe}</li>`;
+            });
+            
+            document.getElementById('invite-link-container').classList.add('hidden');
+            document.getElementById('team-modal').classList.add('active');
+        }
+
+        async function inviteColleague() {
+            const u = document.getElementById('invite-username').value;
+            if(!u) return;
+            
+            setButtonLoading('btn-invite', true);
+            const res = await fetch(`${API_URL}/team/invite`, {
+                method: 'POST', headers: getHeaders(), body: JSON.stringify({username: u})
+            });
+            setButtonLoading('btn-invite', false, 'Найти');
+            
+            const data = await res.json();
+            if (res.ok) {
+                document.getElementById('invite-username').value = '';
+                document.getElementById('invite-link-text').innerText = data.invite_link;
+                document.getElementById('invite-link-container').classList.remove('hidden');
+                
+                openTeamModal(); // Перезагружаем список юзеров
+                loadTeamCount();
+            } else {
+                showInfo('Ошибка', data.detail);
+            }
         }
 
         async function loadServers() {
-            const sort = document.getElementById('sort-order').value;
-            const res = await fetch(`/api/servers?sort=${sort}`, { headers: getHeaders() });
-            
-            // Если токен протух или сломан - выкидываем на логин
+            const res = await fetch(`${API_URL}/servers`, { headers: getHeaders() });
             if (res.status === 401) { logout(); return; }
             
             const servers = await res.json();
             const tbody = document.getElementById('servers-table');
-            const isAdmin = localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'devops';
             tbody.innerHTML = '';
             
+            if(servers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">У вас пока нет серверов</td></tr>';
+                return;
+            }
+
             servers.forEach(s => {
-                let badgeClass = s.status === 'active' ? 'bg-success' : (s.status === 'maintenance' ? 'bg-warning text-dark' : 'bg-secondary');
-                let buttons = '';
-                if (isAdmin) {
-                    buttons = s.status === 'active' 
-                        ? `<button class="btn btn-sm btn-outline-warning me-1" onclick="actionServer(${s.id}, 'maintenance')">В ТО</button>
-                           <button class="btn btn-sm btn-outline-danger" onclick="actionServer(${s.id}, 'archive')">В архив</button>`
-                        : `<button class="btn btn-sm btn-outline-success" onclick="actionServer(${s.id}, 'restore')">Восстановить</button>`;
-                }
-                
+                let badgeClass = s.status === 'active' ? 'bg-success' : 'bg-secondary';
                 tbody.innerHTML += `
                     <tr>
-                        <td class="fw-bold text-muted">#${s.id}</td><td>${s.hostname}</td><td>${s.ip}</td><td>${s.cluster}</td>
+                        <td class="fw-bold text-muted">#${s.id}</td>
+                        <td class="fw-bold">${s.hostname}</td>
+                        <td>${s.ip_address}</td>
                         <td><span class="badge ${badgeClass}">${s.status.toUpperCase()}</span></td>
-                        ${isAdmin ? `<td>${buttons}</td>` : ''}
+                        <td><code class="text-muted" style="font-size: 0.75rem">${s.agent_token}</code></td>
                     </tr>`;
             });
+        }
+
+        function openAddServerModal() {
+            document.getElementById('new-host').value = '';
+            document.getElementById('new-ip').value = '';
+            document.getElementById('modal-step-1').classList.remove('hidden');
+            document.getElementById('modal-step-2').classList.add('hidden');
+            document.getElementById('add-server-modal').classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            if (id === 'add-server-modal') loadServers();
         }
 
         async function createServer() {
             const data = {
                 hostname: document.getElementById('new-host').value,
-                ip_address: document.getElementById('new-ip').value,
-                cluster_id: parseInt(document.getElementById('new-cluster').value) || 1
+                ip_address: document.getElementById('new-ip').value
             };
-            await fetch('/api/servers', { method: 'POST', headers: getHeaders(), body: JSON.stringify(data) });
-            loadServers();
-        }
+            if(!data.hostname || !data.ip_address) return showInfo("Внимание", "Заполните все поля сервера!");
 
-        async function createUser() {
-            const data = {
-                username: document.getElementById('new-user').value,
-                password: document.getElementById('new-pass').value,
-                role_id: parseInt(document.getElementById('new-role').value)
-            };
-            const res = await fetch('/api/users', { method: 'POST', headers: getHeaders(), body: JSON.stringify(data) });
+            setButtonLoading('btn-create-server', true);
+            const res = await fetch(`${API_URL}/servers`, { method: 'POST', headers: getHeaders(), body: JSON.stringify(data) });
+            setButtonLoading('btn-create-server', false, 'Создать и получить токен');
+            
             if (res.ok) {
-                alert("Пользователь успешно создан!");
-                document.getElementById('new-user').value = '';
-                document.getElementById('new-pass').value = '';
+                const responseData = await res.json();
+                document.getElementById('modal-step-1').classList.add('hidden');
+                document.getElementById('modal-step-2').classList.remove('hidden');
+                document.getElementById('install-command').innerText = responseData.install_command;
             } else {
-                alert("Ошибка создания пользователя");
+                const err = await res.json();
+                showInfo("Ошибка создания", err.detail || "Произошла ошибка");
             }
-        }
-
-        async function actionServer(id, action) {
-            let method = action === 'archive' ? 'DELETE' : 'PUT';
-            let url = action === 'archive' ? `/api/servers/${id}` : `/api/servers/${id}/${action}`;
-            await fetch(url, { method: method, headers: getHeaders() });
-            loadServers();
         }
 
         function exportData() {
@@ -213,19 +397,13 @@
                 .then(blob => {
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
-                    a.href = url;
-                    a.download = "backup.json";
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
+                    a.href = url; a.download = "backup.json";
+                    document.body.appendChild(a); a.click(); a.remove();
                 });
         }
 
-        // При запуске сразу чистим старый сломанный кэш браузера, если он есть
-        if (localStorage.getItem('token') === "undefined" || localStorage.getItem('token') === null) {
-            logout();
-        } else {
-            checkAuth();
-        }
+        if (localStorage.getItem('token') === "undefined" || localStorage.getItem('token') === null) { logout(); } 
+        else { checkAuth(); }
     </script>
 </body>
+</html>
