@@ -2,178 +2,254 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SaaS Server Monitoring</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .card { border: none; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .hidden { display: none !important; }
-        
+        :root {
+            --glow-x: 50%;
+            --glow-y: 50%;
+        }
+        body {
+            background-color: #0f172a; /* Темно-синий slate-900 */
+            color: #e2e8f0;
+       <!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS Server Monitoring</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --glow-x: 50%;
+            --glow-y: 50%;
+        }
+        body {
+            background-color: #0f172a; /* Темно-синий slate-900 */
+            color: #e2e8f0;
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow-x: hidden;
+            /* Живой градиент, привязанный к курсору */
+            background-image: radial-gradient(circle 600px at var(--glow-x) var(--glow-y), rgba(56, 189, 248, 0.08), transparent 80%);
+            background-attachment: fixed;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
         .glass-modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-            display: flex; justify-content: center; align-items: center; z-index: 1050;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+            position: fixed; inset: 0; z-index: 50;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
         }
         .glass-modal-overlay.active { opacity: 1; pointer-events: auto; }
+        
         .glass-modal-content {
-            background: white; padding: 2rem; border-radius: 16px; width: 100%; max-width: 500px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: translateY(-20px); transition: transform 0.3s ease;
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: scale(0.95); transition: transform 0.2s ease;
         }
-        .glass-modal-overlay.active .glass-modal-content { transform: translateY(0); }
-        
-        .code-block { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 8px; font-family: monospace; word-break: break-all; }
-        .nav-tabs .nav-link { cursor: pointer; color: #6c757d; }
-        .nav-tabs .nav-link.active { font-weight: bold; color: #0d6efd; }
-        .btn:disabled { cursor: not-allowed; opacity: 0.7; }
-        .invite-link-box { background: #e9ecef; border: 1px dashed #6c757d; border-radius: 8px; padding: 10px; font-family: monospace; font-size: 0.9rem; word-break: break-all; }
-        
-        /* Стили Аккордеона */
-        .accordion-button:not(.collapsed) { background-color: #e7f1ff; color: #0c63e4; }
-        .accordion-button::after { margin-left: auto; }
-        .group-actions { z-index: 10; }
-        .group-actions button { pointer-events: auto; }
+        .glass-modal-overlay.active .glass-modal-content { transform: scale(1); }
+
+        /* Кастомный скроллбар */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+        .btn-loading { pointer-events: none; opacity: 0.7; position: relative; }
+        .btn-loading::after {
+            content: ""; position: absolute; width: 16px; height: 16px; top: 0; bottom: 0; margin: auto; left: 0; right: 0;
+            border: 2px solid transparent; border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite;
+        }
+        .btn-loading > span { opacity: 0; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
-<body>
+<body class="antialiased">
 
-    <!-- УНИВЕРСАЛЬНАЯ МОДАЛКА ОШИБОК -->
-    <div id="info-modal" class="glass-modal-overlay" style="z-index: 1100;">
-        <div class="glass-modal-content" style="max-width: 350px; text-align: center;">
-            <h5 id="info-title" class="fw-bold mb-3">Внимание</h5>
-            <p id="info-msg" class="text-muted mb-4"></p>
-            <button class="btn btn-primary w-100 fw-bold" onclick="closeInfoModal()">Понятно</button>
+    <!-- ИНТЕРАКТИВНЫЙ ФОН (JS Mouse Tracker) -->
+    <script>
+        document.addEventListener('mousemove', (e) => {
+            requestAnimationFrame(() => {
+                document.documentElement.style.setProperty('--glow-x', `${e.clientX}px`);
+                document.documentElement.style.setProperty('--glow-y', `${e.clientY}px`);
+            });
+        });
+    </script>
+
+    <!-- УНИВЕРСАЛЬНАЯ МОДАЛКА УВЕДОМЛЕНИЙ -->
+    <div id="info-modal" class="glass-modal-overlay z-[100]">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-sm text-center shadow-2xl">
+            <h3 id="info-title" class="text-xl font-bold text-white mb-2">Внимание</h3>
+            <p id="info-msg" class="text-slate-400 mb-6"></p>
+            <button onclick="closeModal('info-modal')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-xl transition-colors">Понятно</button>
         </div>
     </div>
 
     <!-- МОДАЛКА ПОДТВЕРЖДЕНИЯ -->
-    <div id="confirm-modal" class="glass-modal-overlay" style="z-index: 1100;">
-        <div class="glass-modal-content" style="max-width: 350px; text-align: center;">
-            <h5 class="fw-bold mb-3 text-danger">Подтверждение</h5>
-            <p id="confirm-msg" class="text-muted mb-4">Вы уверены?</p>
-            <div class="d-flex gap-2">
-                <button class="btn btn-outline-secondary w-50 fw-bold" onclick="closeConfirmModal()">Отмена</button>
-                <button id="confirm-action-btn" class="btn btn-danger w-50 fw-bold">Удалить</button>
+    <div id="confirm-modal" class="glass-modal-overlay z-[100]">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-sm text-center shadow-2xl">
+            <h3 class="text-xl font-bold text-rose-500 mb-2">Подтверждение</h3>
+            <p id="confirm-msg" class="text-slate-400 mb-6">Вы уверены?</p>
+            <div class="flex gap-3">
+                <button onclick="closeModal('confirm-modal')" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 px-4 rounded-xl transition-colors">Отмена</button>
+                <button id="confirm-action-btn" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-semibold py-2 px-4 rounded-xl transition-colors">Удалить</button>
             </div>
         </div>
     </div>
 
     <!-- АВТОРИЗАЦИЯ -->
-    <div id="auth-screen" class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
-        <div class="card p-4" style="width: 400px;">
-            <h3 class="text-center mb-3 text-primary fw-bold">SaaS Monitor</h3>
+    <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="glass-panel p-8 rounded-3xl w-full max-w-md">
+            <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 text-center mb-8">SaaS Monitor</h2>
             
-            <ul class="nav nav-tabs mb-4 d-flex w-100">
-                <li class="nav-item flex-fill text-center"><a class="nav-link active" id="tab-login" onclick="switchAuthTab('login')">Вход</a></li>
-                <li class="nav-item flex-fill text-center"><a class="nav-link" id="tab-register" onclick="switchAuthTab('register')">Регистрация</a></li>
-            </ul>
-            
-            <div id="form-login">
-                <input type="email" id="login-email" class="form-control mb-3" placeholder="Email">
-                <input type="password" id="login-password" class="form-control mb-4" placeholder="Пароль">
-                <button id="btn-login" class="btn btn-primary w-100 fw-bold" onclick="login()">Войти</button>
+            <div class="flex rounded-xl bg-slate-800/50 p-1 mb-6">
+                <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 py-2 text-sm font-semibold rounded-lg bg-blue-600 text-white shadow transition-all">Вход</button>
+                <button id="tab-register" onclick="switchAuthTab('register')" class="flex-1 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition-all">Регистрация</button>
             </div>
 
-            <div id="form-register" class="hidden">
-                <input type="text" id="reg-username" class="form-control mb-3" placeholder="Никнейм (только латиница и цифры)">
-                <input type="email" id="reg-email" class="form-control mb-3" placeholder="Ваш Email">
-                <input type="password" id="reg-password" class="form-control mb-4" placeholder="Придумайте пароль">
-                <button id="btn-register" class="btn btn-success w-100 fw-bold" onclick="register()">Создать аккаунт</button>
+            <div id="form-login" class="space-y-4">
+                <input type="email" id="login-email" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors" placeholder="Email">
+                <input type="password" id="login-password" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors" placeholder="Пароль">
+                <button id="btn-login" onclick="login()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-900/50 transition-all"><span>Войти</span></button>
+            </div>
+
+            <div id="form-register" class="space-y-4 hidden">
+                <input type="text" id="reg-username" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors" placeholder="Никнейм (без @, только a-z, 0-9, _)">
+                <input type="email" id="reg-email" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors" placeholder="Email">
+                <input type="password" id="reg-password" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors" placeholder="Пароль">
+                <button id="btn-register" onclick="register()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-emerald-900/50 transition-all"><span>Создать аккаунт</span></button>
             </div>
         </div>
     </div>
 
     <!-- ГЛАВНЫЙ ЭКРАН -->
-    <div id="app-screen" class="hidden">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-            <div class="container-fluid px-4">
-                <a class="navbar-brand fw-bold text-primary" href="#">SaaS Monitor</a>
-                <div class="ms-auto d-flex align-items-center gap-3">
-                    <span class="text-light ms-3 fw-bold" id="user-greeting"></span>
-                    <button class="btn btn-outline-light btn-sm" onclick="logout()">Выйти</button>
+    <div id="app-screen" class="hidden min-h-screen flex flex-col">
+        <nav class="glass-panel sticky top-0 z-40 border-b border-slate-800/50 rounded-none shadow-sm px-6 py-4">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <h1 class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 tracking-tight">SaaS Monitor</h1>
+                <div class="flex items-center gap-4">
+                    <span id="user-greeting" class="font-semibold text-slate-300"></span>
+                    <button onclick="logout()" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">Выйти</button>
                 </div>
             </div>
         </nav>
 
-        <div class="container-fluid px-4 mx-auto" style="max-width: 1200px;">
-            <div id="global-admin-panel" class="card p-3 mb-4 border-start border-danger border-4 hidden">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="m-0 text-danger fw-bold">SuperAdmin Panel</h5>
-                    <button class="btn btn-sm btn-danger fw-bold" onclick="exportData()">Скачать Backup БД</button>
+        <main class="flex-1 w-full max-w-7xl mx-auto px-6 py-8">
+            <div id="global-admin-panel" class="glass-panel border-l-4 border-l-rose-500 p-4 rounded-xl mb-8 flex justify-between items-center hidden">
+                <span class="font-bold text-rose-400">SuperAdmin Mode</span>
+                <button onclick="exportData()" class="bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors">Скачать Backup БД</button>
+            </div>
+
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-1">Рабочие пространства</h2>
+                    <p class="text-slate-400 text-sm">Управляйте группами, серверами и доступом команды</p>
                 </div>
+                <button onclick="openModal('create-group-modal')" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg shadow-blue-900/30 transition-all">+ Новая группа</button>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3 class="fw-bold m-0">Рабочие пространства</h3>
-                <button class="btn btn-outline-primary fw-bold px-4" onclick="openCreateGroupModal()">+ Новая группа</button>
-            </div>
-
-            <!-- АККОРДЕОН С ГРУППАМИ -->
-            <div class="accordion mb-5" id="dashboard-accordion">
+            <!-- СЕТКА ГРУПП (GRID) -->
+            <div id="dashboard-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                 <!-- Генерируется через JS -->
             </div>
-        </div>
+        </main>
     </div>
 
-    <!-- МОДАЛКА: Новая Группа -->
+    <!-- МОДАЛКИ ДЕЙСТВИЙ -->
+
+    <!-- Создание группы -->
     <div id="create-group-modal" class="glass-modal-overlay">
-        <div class="glass-modal-content">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="fw-bold m-0">Создание группы</h4>
-                <button type="button" class="btn-close" onclick="closeModal('create-group-modal')"></button>
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-white">Создание группы</h3>
+                <button onclick="closeModal('create-group-modal')" class="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
             </div>
-            <input type="text" id="new-group-name" class="form-control mb-4" placeholder="Название группы (например: Backend Team)">
-            <button id="btn-create-group" class="btn btn-primary w-100 fw-bold" onclick="createGroup()">Создать</button>
+            <input type="text" id="new-group-name" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 mb-6" placeholder="Название группы">
+            <button id="btn-create-group" onclick="createGroup()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-colors"><span>Создать</span></button>
         </div>
     </div>
 
-    <!-- МОДАЛКА: Сервер (Добавление/Просмотр команды) -->
+    <!-- Переименование группы -->
+    <div id="rename-group-modal" class="glass-modal-overlay">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-white">Переименовать группу</h3>
+                <button onclick="closeModal('rename-group-modal')" class="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            <input type="hidden" id="rename-ws-id">
+            <input type="text" id="rename-group-name" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 mb-6" placeholder="Новое название">
+            <button id="btn-rename-group" onclick="renameGroup()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-colors"><span>Сохранить</span></button>
+        </div>
+    </div>
+
+    <!-- Добавление сервера -->
     <div id="server-modal" class="glass-modal-overlay">
-        <div class="glass-modal-content">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="fw-bold m-0" id="server-modal-title">Добавление сервера</h4>
-                <button type="button" class="btn-close" onclick="closeModal('server-modal')"></button>
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-lg shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="server-modal-title" class="text-xl font-bold text-white">Добавление сервера</h3>
+                <button onclick="closeModal('server-modal')" class="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
             </div>
             
-            <div id="server-modal-step-1">
+            <div id="server-modal-step-1" class="space-y-4">
                 <input type="hidden" id="server-workspace-id">
-                <input type="text" id="new-host" class="form-control mb-3" placeholder="Название (например: web-prod-01)">
-                <input type="text" id="new-ip" class="form-control mb-4" placeholder="IP Адрес">
-                <button id="btn-create-server" class="btn btn-primary w-100 fw-bold" onclick="createServer()">Создать и получить токен</button>
+                <input type="text" id="new-host" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500" placeholder="Название хоста (web-01)">
+                <input type="text" id="new-ip" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500" placeholder="IP Адрес">
+                <button id="btn-create-server" onclick="createServer()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-colors mt-2"><span>Зарегистрировать</span></button>
             </div>
 
             <div id="server-modal-step-2" class="hidden">
-                <div class="alert alert-info text-center fw-bold" id="server-modal-status">Установка Агента</div>
-                <p>Выполните на сервере от имени <b>root</b>:</p>
-                <div class="code-block mb-3" id="install-command"></div>
-                <button class="btn btn-secondary w-100 fw-bold mb-2" onclick="copyText('install-command', 'Команда скопирована!')">Скопировать</button>
-                <button class="btn btn-outline-dark w-100" onclick="closeModal('server-modal')">Закрыть</button>
+                <div class="bg-blue-900/30 border border-blue-500/30 text-blue-400 px-4 py-3 rounded-xl font-semibold text-center mb-4">Сервер зарегистрирован!</div>
+                <p class="text-slate-300 mb-2 text-sm">Выполните команду от имени <b>root</b>:</p>
+                <div class="bg-black/50 p-4 rounded-xl font-mono text-sm text-slate-300 break-all mb-4 border border-slate-700" id="install-command"></div>
+                <button onclick="copyText('install-command', 'Команда скопирована!')" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-xl transition-colors">Скопировать команду</button>
             </div>
         </div>
     </div>
 
-    <!-- МОДАЛКА: Приглашение участника -->
-    <div id="invite-modal" class="glass-modal-overlay">
-        <div class="glass-modal-content">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="fw-bold m-0">Приглашение в группу</h4>
-                <button type="button" class="btn-close" onclick="closeModal('invite-modal')"></button>
+    <!-- Перемещение сервера (Трансфер) -->
+    <div id="move-server-modal" class="glass-modal-overlay">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-white">Перемещение сервера</h3>
+                <button onclick="closeModal('move-server-modal')" class="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
             </div>
-            
-            <div class="mb-4">
-                <input type="hidden" id="invite-workspace-id">
-                <label class="form-label text-muted small fw-bold">Никнейм пользователя</label>
-                <div class="d-flex gap-2 mb-2">
-                    <input type="text" id="invite-username" class="form-control" placeholder="@username">
-                    <button id="btn-invite" class="btn btn-success fw-bold" onclick="inviteColleague()">Добавить</button>
-                </div>
-                <div id="invite-link-container" class="hidden mt-3">
-                    <p class="text-success small fw-bold mb-1">Пользователь добавлен! Отправьте ему ссылку:</p>
-                    <div class="d-flex gap-2">
-                        <div class="invite-link-box flex-fill text-muted" id="invite-link-text"></div>
-                        <button class="btn btn-outline-secondary btn-sm" onclick="copyText('invite-link-text', 'Ссылка скопирована!')">Копировать</button>
-                    </div>
+            <p class="text-slate-400 text-sm mb-4">Выберите группу, в которую нужно перенести этот сервер.</p>
+            <input type="hidden" id="move-server-id">
+            <select id="move-target-ws" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 mb-6 appearance-none">
+                <!-- Заполняется через JS -->
+            </select>
+            <button id="btn-move-server" onclick="moveServer()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-colors"><span>Переместить</span></button>
+        </div>
+    </div>
+
+    <!-- Приглашение участника -->
+    <div id="invite-modal" class="glass-modal-overlay">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-white">Пригласить коллегу</h3>
+                <button onclick="closeModal('invite-modal')" class="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            <input type="hidden" id="invite-workspace-id">
+            <div class="flex gap-2 mb-2">
+                <input type="text" id="invite-username" class="flex-1 bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500" placeholder="@username">
+                <button id="btn-invite" onclick="inviteColleague()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 rounded-xl transition-colors"><span>Найти</span></button>
+            </div>
+            <div id="invite-link-container" class="hidden mt-6">
+                <p class="text-emerald-400 text-sm font-semibold mb-2">Отправьте эту ссылку участнику:</p>
+                <div class="flex gap-2">
+                    <div class="flex-1 bg-black/50 border border-slate-700 p-3 rounded-xl font-mono text-sm text-slate-300 break-all" id="invite-link-text"></div>
+                    <button onclick="copyText('invite-link-text', 'Ссылка скопирована!')" class="bg-slate-700 hover:bg-slate-600 text-white font-semibold px-4 rounded-xl transition-colors">Копия</button>
                 </div>
             </div>
         </div>
@@ -181,112 +257,82 @@
 
     <script>
         const API_URL = '/api';
+        let currentWorkspaces = [];
 
-        // --- UX ---
+        // --- UX УТИЛИТЫ ---
         function showInfo(title, msg) {
             document.getElementById('info-title').innerText = title;
             document.getElementById('info-msg').innerText = msg;
-            document.getElementById('info-modal').classList.add('active');
+            openModal('info-modal');
         }
-        function closeInfoModal() { document.getElementById('info-modal').classList.remove('active'); }
-        
         function showConfirm(msg, actionFn) {
             document.getElementById('confirm-msg').innerText = msg;
             const btn = document.getElementById('confirm-action-btn');
-            btn.onclick = () => { actionFn(); closeConfirmModal(); };
-            document.getElementById('confirm-modal').classList.add('active');
+            btn.onclick = () => { actionFn(); closeModal('confirm-modal'); };
+            openModal('confirm-modal');
         }
-        function closeConfirmModal() { document.getElementById('confirm-modal').classList.remove('active'); }
-
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { 
+            document.getElementById(id).classList.remove('active'); 
             if(id !== 'info-modal' && id !== 'confirm-modal') loadDashboard();
         }
 
-        function setButtonLoading(btnId, isLoading, originalText = '') {
+        function setBtnLoading(btnId, isLoading) {
             const btn = document.getElementById(btnId);
-            if (isLoading) {
-                btn.disabled = true;
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Загрузка...';
-            } else {
-                btn.disabled = false;
-                btn.innerHTML = originalText;
-            }
+            if (isLoading) btn.classList.add('btn-loading');
+            else btn.classList.remove('btn-loading');
         }
 
         function copyText(elementId, successMsg) {
             const text = document.getElementById(elementId).innerText;
-            navigator.clipboard.writeText(text).then(() => { showInfo("Успех", successMsg); }).catch(err => {
-                const tempTextArea = document.createElement("textarea");
-                tempTextArea.value = text;
-                document.body.appendChild(tempTextArea);
-                tempTextArea.select();
-                document.execCommand("copy");
-                document.body.removeChild(tempTextArea);
-                showInfo("Успех", successMsg);
-            });
+            navigator.clipboard.writeText(text).then(() => showInfo("Успех", successMsg))
+                .catch(() => {
+                    const temp = document.createElement("textarea"); temp.value = text;
+                    document.body.appendChild(temp); temp.select(); document.execCommand("copy"); temp.remove();
+                    showInfo("Успех", successMsg);
+                });
         }
 
         // --- AUTH ---
         function switchAuthTab(tab) {
-            if (tab === 'login') {
-                document.getElementById('tab-login').classList.add('active');
-                document.getElementById('tab-register').classList.remove('active');
-                document.getElementById('form-login').classList.remove('hidden');
-                document.getElementById('form-register').classList.add('hidden');
-            } else {
-                document.getElementById('tab-register').classList.add('active');
-                document.getElementById('tab-login').classList.remove('active');
-                document.getElementById('form-register').classList.remove('hidden');
-                document.getElementById('form-login').classList.add('hidden');
-            }
+            const isLogin = tab === 'login';
+            document.getElementById('form-login').classList.toggle('hidden', !isLogin);
+            document.getElementById('form-register').classList.toggle('hidden', isLogin);
+            
+            const btnLog = document.getElementById('tab-login');
+            const btnReg = document.getElementById('tab-register');
+            
+            btnLog.className = isLogin ? 'flex-1 py-2 text-sm font-semibold rounded-lg bg-blue-600 text-white shadow transition-all' : 'flex-1 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition-all';
+            btnReg.className = !isLogin ? 'flex-1 py-2 text-sm font-semibold rounded-lg bg-emerald-600 text-white shadow transition-all' : 'flex-1 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition-all';
         }
 
         async function login() {
-            const e = document.getElementById('login-email').value;
-            const p = document.getElementById('login-password').value;
+            const e = document.getElementById('login-email').value, p = document.getElementById('login-password').value;
             if(!e || !p) return showInfo('Ошибка', "Заполните все поля");
-
-            setButtonLoading('btn-login', true);
+            setBtnLoading('btn-login', true);
             const res = await fetch(`${API_URL}/login`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email: e, password: p}) });
-            setButtonLoading('btn-login', false, 'Войти');
-
-            if (res.ok) { saveAuth(await res.json()); } 
-            else { showInfo('Ошибка входа', "Неверная почта или пароль"); }
+            setBtnLoading('btn-login', false);
+            if (res.ok) { saveAuth(await res.json()); } else showInfo('Ошибка', "Неверная почта или пароль");
         }
 
         async function register() {
-            const u = document.getElementById('reg-username').value.trim();
-            const e = document.getElementById('reg-email').value;
-            const p = document.getElementById('reg-password').value;
-            
+            const u = document.getElementById('reg-username').value.trim(), e = document.getElementById('reg-email').value, p = document.getElementById('reg-password').value;
             if(!u || !e || !p) return showInfo('Ошибка', "Заполните все поля");
-            if(!/^[a-zA-Z0-9_]{3,30}$/.test(u.replace('@',''))) return showInfo('Ошибка', "Никнейм должен быть от 3 до 30 символов, только латиница, цифры и _");
-
-            setButtonLoading('btn-register', true);
+            if(!/^[a-zA-Z0-9_]{3,30}$/.test(u.replace('@',''))) return showInfo('Ошибка', "Никнейм должен быть от 3 до 30 символов, только a-z, 0-9 и _");
+            setBtnLoading('btn-register', true);
             const res = await fetch(`${API_URL}/users`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: u.replace('@',''), email: e, password: p}) });
-            setButtonLoading('btn-register', false, 'Создать аккаунт');
-
+            setBtnLoading('btn-register', false);
             if (res.ok) {
-                document.getElementById('login-email').value = e;
-                document.getElementById('login-password').value = p;
-                showInfo('Успех', 'Регистрация прошла успешно! Входим...');
-                setTimeout(login, 1500);
-            } else {
-                const data = await res.json();
-                showInfo('Ошибка', data.detail || "Произошла ошибка");
-            }
+                document.getElementById('login-email').value = e; document.getElementById('login-password').value = p;
+                showInfo('Успех', 'Аккаунт создан! Входим...'); setTimeout(login, 1500);
+            } else showInfo('Ошибка', (await res.json()).detail || "Произошла ошибка");
         }
 
         function saveAuth(data) {
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('role', data.role);
-            localStorage.setItem('username', data.username);
+            localStorage.setItem('token', data.token); localStorage.setItem('role', data.role); localStorage.setItem('username', data.username);
             checkAuth();
         }
-
         function logout() { localStorage.clear(); checkAuth(); }
-
         function getHeaders() { return { 'Authorization': `Bearer ${localStorage.getItem('token')}`, 'Content-Type': 'application/json' }; }
 
         async function checkAuth() {
@@ -295,8 +341,7 @@
                 document.getElementById('auth-screen').classList.add('hidden');
                 document.getElementById('app-screen').classList.remove('hidden');
                 document.getElementById('user-greeting').innerText = `@${localStorage.getItem('username')}`;
-                if (localStorage.getItem('role') === 'global_admin') document.getElementById('global-admin-panel').classList.remove('hidden');
-                
+                document.getElementById('global-admin-panel').classList.toggle('hidden', localStorage.getItem('role') !== 'global_admin');
                 loadDashboard();
             } else {
                 document.getElementById('auth-screen').classList.remove('hidden');
@@ -304,191 +349,715 @@
             }
         }
 
-        // --- DASHBOARD (АККОРДЕОН) ---
+        // --- DASHBOARD ---
         async function loadDashboard() {
             const res = await fetch(`${API_URL}/dashboard`, { headers: getHeaders() });
             if (res.status === 401) { logout(); return; }
             
-            const workspaces = await res.json();
-            const container = document.getElementById('dashboard-accordion');
-            container.innerHTML = '';
+            currentWorkspaces = await res.json();
+            const grid = document.getElementById('dashboard-grid');
+            grid.innerHTML = '';
             
-            if(workspaces.length === 0) {
-                container.innerHTML = '<div class="text-center text-muted mt-5">У вас нет активных групп.</div>';
+            if(currentWorkspaces.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center text-slate-500 py-12">У вас пока нет групп. Создайте первую!</div>';
                 return;
             }
 
-            workspaces.forEach((ws, index) => {
-                const isExpanded = index === 0 ? 'true' : 'false';
-                const collapseClass = index === 0 ? 'show' : '';
+            currentWorkspaces.forEach(ws => {
+                let ownerActions = ws.is_owner ? `
+                    <div class="flex gap-1">
+                        <button onclick="openRenameModal(${ws.id}, '${ws.name.replace(/'/g, "\\'")}')" class="text-slate-400 hover:text-blue-400 transition" title="Переименовать">✏️</button>
+                        <button onclick="deleteWorkspace(${ws.id}, '${ws.name.replace(/'/g, "\\'")}')" class="text-slate-400 hover:text-rose-400 transition" title="Удалить">🗑</button>
+                    </div>` : '';
                 
-                let inviteBtn = ws.is_owner 
-                    ? `<button class="btn btn-sm btn-outline-success fw-bold ms-2" onclick="event.stopPropagation(); openInviteModal(${ws.id})">+ участник</button>` 
-                    : '';
+                let addMemberBtn = ws.is_owner ? `<button onclick="openInviteModal(${ws.id})" class="text-xs bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 px-2 py-1 rounded transition">+ юзер</button>` : '';
 
-                // Генерация строк серверов (БЕЗ ID)
-                let serversHtml = '';
-                if(ws.servers.length === 0) {
-                    serversHtml = '<tr><td colspan="4" class="text-center text-muted">В этой группе пока нет серверов</td></tr>';
-                } else {
-                    ws.servers.forEach(s => {
-                        let badgeClass = s.status === 'active' ? 'bg-success' : 'bg-secondary';
-                        serversHtml += `
-                            <tr>
-                                <td class="fw-bold">${s.hostname}</td>
-                                <td>${s.ip_address}</td>
-                                <td><span class="badge ${badgeClass}">${s.status.toUpperCase()}</span></td>
-                                <td>
-                                    <div class="d-flex justify-content-end gap-2">
-                                        <button class="btn btn-sm btn-outline-primary fw-bold" onclick="viewMonitoring('${s.hostname}')">📊 Логи</button>
-                                        <button class="btn btn-sm btn-outline-dark fw-bold" onclick="showAgentCommand('${s.agent_token}')">⚙️ Агент</button>
-                                        <button class="btn btn-sm btn-outline-danger fw-bold" onclick="deleteServer(${s.id}, '${s.hostname}')">🗑</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                }
-
-                // Генерация списка участников
-                let membersText = ws.members.map(m => `@${m.username}`).join(', ');
-
-                let accHtml = `
-                <div class="accordion-item shadow-sm border-0 mb-3 rounded overflow-hidden">
-                    <h2 class="accordion-header" id="heading-${ws.id}">
-                        <button class="accordion-button ${index !== 0 ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${ws.id}">
-                            <div class="d-flex justify-content-between w-100 align-items-center me-3">
-                                <div>
-                                    <span class="fw-bold fs-5">${ws.name}</span>
-                                    <div class="small text-muted mt-1">Участники: ${membersText}</div>
-                                </div>
-                                <div class="group-actions">
-                                    <button class="btn btn-sm btn-primary fw-bold" onclick="event.stopPropagation(); openAddServerModal(${ws.id})">+ сервер</button>
-                                    ${inviteBtn}
-                                </div>
+                let serversHtml = ws.servers.length === 0 
+                    ? '<div class="text-center text-slate-500 text-sm py-4 border-t border-slate-700/50 border-dashed mt-4">Нет серверов</div>' 
+                    : ws.servers.map(s => `
+                        <div class="flex items-center justify-between py-3 border-b border-slate-700/50 last:border-0 group">
+                            <div class="overflow-hidden">
+                                <div class="font-semibold text-slate-200 truncate">${s.hostname}</div>
+                                <div class="text-xs text-slate-500 font-mono">${s.ip_address}</div>
                             </div>
-                        </button>
-                    </h2>
-                    <div id="collapse-${ws.id}" class="accordion-collapse collapse ${collapseClass}">
-                        <div class="accordion-body p-0">
-                            <table class="table table-hover align-middle m-0">
-                                <thead class="table-light">
-                                    <tr><th>Хостнейм</th><th>IP Адрес</th><th>Статус</th><th class="text-end">Действия</th></tr>
-                                </thead>
-                                <tbody>${serversHtml}</tbody>
-                            </table>
+                            <div class="flex items-center gap-2 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onclick="viewMonitoring('${s.hostname}')" class="text-xs bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 px-2 py-1 rounded" title="Логи">📊</button>
+                                <button onclick="showAgentCommand('${s.agent_token}')" class="text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 px-2 py-1 rounded" title="Скрипт агента">⚙️</button>
+                                <button onclick="openMoveModal(${s.id}, ${ws.id})" class="text-xs bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 px-2 py-1 rounded" title="Переместить">➡️</button>
+                                <button onclick="deleteServer(${s.id}, '${s.hostname}')" class="text-xs bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 px-2 py-1 rounded" title="Удалить">✕</button>
+                            </div>
+                        </div>
+                    `).join('');
+
+                let membersHtml = ws.members.map(m => `<span class="inline-block bg-slate-800 border border-slate-700 text-slate-300 text-xs px-2 py-0.5 rounded-full mt-1 me-1">@${m.username}</span>`).join('');
+
+                grid.innerHTML += `
+                <div class="glass-panel p-5 rounded-2xl flex flex-col h-full">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-lg font-bold text-white truncate pe-2">${ws.name}</h3>
+                        ${ownerActions}
+                    </div>
+                    <div class="mb-4 flex-1">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Участники</span>
+                            ${addMemberBtn}
+                        </div>
+                        <div class="mb-4">${membersHtml}</div>
+                        
+                        <div class="flex justify-between items-center mb-2 mt-6 border-t border-slate-700/50 pt-4">
+                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Серверы</span>
+                            <button onclick="openAddServerModal(${ws.id})" class="text-xs bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 rounded transition shadow">+ сервер</button>
+                        </div>
+                        <div class="bg-slate-900/50 rounded-xl px-3 border border-slate-800">
+                            ${serversHtml}
                         </div>
                     </div>
-                </div>
-                `;
-                container.innerHTML += accHtml;
+                </div>`;
             });
         }
 
         // --- GROUP ACTIONS ---
-        function openCreateGroupModal() {
-            document.getElementById('new-group-name').value = '';
-            document.getElementById('create-group-modal').classList.add('active');
-        }
-
         async function createGroup() {
             const name = document.getElementById('new-group-name').value;
             if(!name) return;
-            setButtonLoading('btn-create-group', true);
-            const res = await fetch(`${API_URL}/workspaces`, { method: 'POST', headers: getHeaders(), body: JSON.stringify({name: name}) });
-            setButtonLoading('btn-create-group', false, 'Создать');
-            if(res.ok) closeModal('create-group-modal');
-            else showInfo('Ошибка', 'Не удалось создать группу');
+            setBtnLoading('btn-create-group', true);
+            const res = await fetch(`${API_URL}/workspaces`, { method: 'POST', headers: getHeaders(), body: JSON.stringify({name}) });
+            setBtnLoading('btn-create-group', false);
+            if(res.ok) closeModal('create-group-modal'); else showInfo('Ошибка', 'Сбой создания');
         }
 
+        function openRenameModal(id, currentName) {
+            document.getElementById('rename-ws-id').value = id;
+            document.getElementById('rename-group-name').value = currentName;
+            openModal('rename-group-modal');
+        }
+
+        async function renameGroup() {
+            const id = document.getElementById('rename-ws-id').value;
+            const name = document.getElementById('rename-group-name').value;
+            if(!name) return;
+            setBtnLoading('btn-rename-group', true);
+            const res = await fetch(`${API_URL}/workspaces/${id}`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify({name}) });
+            setBtnLoading('btn-rename-group', false);
+            if(res.ok) closeModal('rename-group-modal'); else showInfo('Ошибка', (await res.json()).detail);
+        }
+
+        function deleteWorkspace(id, name) {
+            showConfirm(`Внимание! Удаление группы "${name}" навсегда уничтожит все серверы внутри нее. Продолжить?`, async () => {
+                const res = await fetch(`${API_URL}/workspaces/${id}`, { method: 'DELETE', headers: getHeaders() });
+                if(res.ok) loadDashboard(); else showInfo("Ошибка", (await res.json()).detail);
+            });
+        }
+
+        // --- INVITES ---
         function openInviteModal(wsId) {
             document.getElementById('invite-workspace-id').value = wsId;
             document.getElementById('invite-username').value = '';
             document.getElementById('invite-link-container').classList.add('hidden');
-            document.getElementById('invite-modal').classList.add('active');
+            openModal('invite-modal');
         }
 
         async function inviteColleague() {
-            const u = document.getElementById('invite-username').value;
-            const wsId = document.getElementById('invite-workspace-id').value;
+            const u = document.getElementById('invite-username').value, wsId = document.getElementById('invite-workspace-id').value;
             if(!u) return;
-            
-            setButtonLoading('btn-invite', true);
+            setBtnLoading('btn-invite', true);
             const res = await fetch(`${API_URL}/team/invite`, { method: 'POST', headers: getHeaders(), body: JSON.stringify({username: u, workspace_id: parseInt(wsId)}) });
-            setButtonLoading('btn-invite', false, 'Добавить');
-            
+            setBtnLoading('btn-invite', false);
             const data = await res.json();
             if (res.ok) {
                 document.getElementById('invite-username').value = '';
                 document.getElementById('invite-link-text').innerText = data.invite_link;
                 document.getElementById('invite-link-container').classList.remove('hidden');
-                loadDashboard(); // Обновляем список в фоне
+                loadDashboard();
             } else showInfo('Ошибка', data.detail);
         }
 
-        // --- SERVER ACTIONS ---
+        // --- SERVERS ---
         function openAddServerModal(wsId) {
             document.getElementById('server-workspace-id').value = wsId;
-            document.getElementById('new-host').value = '';
-            document.getElementById('new-ip').value = '';
+            document.getElementById('new-host').value = ''; document.getElementById('new-ip').value = '';
             document.getElementById('server-modal-step-1').classList.remove('hidden');
             document.getElementById('server-modal-step-2').classList.add('hidden');
             document.getElementById('server-modal-title').innerText = "Добавление сервера";
-            document.getElementById('server-modal').classList.add('active');
+            openModal('server-modal');
         }
 
         async function createServer() {
-            const data = { 
-                hostname: document.getElementById('new-host').value, 
-                ip_address: document.getElementById('new-ip').value,
-                workspace_id: parseInt(document.getElementById('server-workspace-id').value)
-            };
+            const data = { hostname: document.getElementById('new-host').value, ip_address: document.getElementById('new-ip').value, workspace_id: parseInt(document.getElementById('server-workspace-id').value) };
             if(!data.hostname || !data.ip_address) return showInfo("Внимание", "Заполните все поля!");
-
-            setButtonLoading('btn-create-server', true);
+            setBtnLoading('btn-create-server', true);
             const res = await fetch(`${API_URL}/servers`, { method: 'POST', headers: getHeaders(), body: JSON.stringify(data) });
-            setButtonLoading('btn-create-server', false, 'Создать и получить токен');
-            
-            if (res.ok) {
-                const responseData = await res.json();
-                document.getElementById('server-modal-status').innerText = "Сервер зарегистрирован!";
-                showAgentCommand(responseData.agent_token);
-            } else showInfo("Ошибка", (await res.json()).detail || "Произошла ошибка");
+            setBtnLoading('btn-create-server', false);
+            if (res.ok) showAgentCommand((await res.json()).agent_token); else showInfo("Ошибка", (await res.json()).detail);
         }
 
         function showAgentCommand(token) {
             document.getElementById('server-modal-step-1').classList.add('hidden');
             document.getElementById('server-modal-step-2').classList.remove('hidden');
             document.getElementById('server-modal-title').innerText = "Настройка агента";
-            document.getElementById('server-modal-status').innerText = "Инструкция по установке";
             document.getElementById('install-command').innerText = `curl -sL https://inv.e-laba52.ru/agent.sh | sudo bash -s -- --token=${token}`;
-            document.getElementById('server-modal').classList.add('active');
+            openModal('server-modal');
         }
 
-        function viewMonitoring(hostname) {
-            showInfo(`Мониторинг: ${hostname}`, "Данные собираются, но просмотрщик (Grafana) еще не настроен. Это наш следующий шаг!");
+        // Трансфер сервера
+        function openMoveModal(serverId, currentWsId) {
+            const select = document.getElementById('move-target-ws');
+            select.innerHTML = currentWorkspaces
+                .filter(ws => ws.id !== currentWsId) // Не показываем текущую группу
+                .map(ws => `<option value="${ws.id}">${ws.name}</option>`)
+                .join('');
+            
+            if(select.innerHTML === '') {
+                showInfo("Некуда перемещать", "Вы состоите только в одной группе.");
+                return;
+            }
+            document.getElementById('move-server-id').value = serverId;
+            openModal('move-server-modal');
         }
+
+        async function moveServer() {
+            const serverId = document.getElementById('move-server-id').value;
+            const targetWsId = document.getElementById('move-target-ws').value;
+            setBtnLoading('btn-move-server', true);
+            const res = await fetch(`${API_URL}/servers/${serverId}/move`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify({target_workspace_id: parseInt(targetWsId)}) });
+            setBtnLoading('btn-move-server', false);
+            if(res.ok) closeModal('move-server-modal'); else showInfo("Ошибка", (await res.json()).detail);
+        }
+
+        function viewMonitoring(hostname) { showInfo(`Логи: ${hostname}`, "Данные собираются! Grafana — наш следующий шаг."); }
 
         function deleteServer(id, hostname) {
-            showConfirm(`Вы действительно хотите удалить сервер ${hostname}? Сбор логов будет прекращен.`, async () => {
+            showConfirm(`Удалить сервер ${hostname}? Агент перестанет присылать логи.`, async () => {
                 const res = await fetch(`${API_URL}/servers/${id}`, { method: 'DELETE', headers: getHeaders() });
-                if(res.ok) { loadDashboard(); showInfo("Успех", "Сервер удален."); }
-                else showInfo("Ошибка", "Не удалось удалить сервер.");
+                if(res.ok) loadDashboard(); else showInfo("Ошибка", "Сбой удаления.");
             });
         }
 
         function exportData() {
             fetch('/api/export', { headers: getHeaders() })
-                .then(res => res.blob())
-                .then(blob => {
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a'); a.href = url; a.download = "backup.json";
-                    document.body.appendChild(a); a.click(); a.remove();
+                .then(r => r.blob()).then(b => {
+                    const u = window.URL.createObjectURL(b); const a = document.createElement('a');
+                    a.href = u; a.download = "backup.json"; document.body.appendChild(a); a.click(); a.remove();
                 });
         }
 
-        if (localStorage.getItem('token') === "undefined" || localStorage.getItem('token') === null) { logout(); } 
-        else { checkAuth(); }
+        if (!localStorage.getItem('token') || localStorage.getItem('token') === "undefined") logout(); else checkAuth();
+    </script>
+</body>
+</html>     min-height: 100vh;
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow-x: hidden;
+            /* Живой градиент, привязанный к курсору */
+            background-image: radial-gradient(circle 600px at var(--glow-x) var(--glow-y), rgba(56, 189, 248, 0.08), transparent 80%);
+            background-attachment: fixed;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-modal-overlay {
+            position: fixed; inset: 0; z-index: 50;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+        }
+        .glass-modal-overlay.active { opacity: 1; pointer-events: auto; }
+        
+        .glass-modal-content {
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: scale(0.95); transition: transform 0.2s ease;
+        }
+        .glass-modal-overlay.active .glass-modal-content { transform: scale(1); }
+
+        /* Кастомный скроллбар */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+        .btn-loading { pointer-events: none; opacity: 0.7; position: relative; }
+        .btn-loading::after {
+            content: ""; position: absolute; width: 16px; height: 16px; top: 0; bottom: 0; margin: auto; left: 0; right: 0;
+            border: 2px solid transparent; border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite;
+        }
+        .btn-loading > span { opacity: 0; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- ИНТЕРАКТИВНЫЙ ФОН (JS Mouse Tracker) -->
+    <script>
+        document.addEventListener('mousemove', (e) => {
+            requestAnimationFrame(() => {
+                document.documentElement.style.setProperty('--glow-x', `${e.clientX}px`);
+                document.documentElement.style.setProperty('--glow-y', `${e.clientY}px`);
+            });
+        });
+    </script>
+
+    <!-- УНИВЕРСАЛЬНАЯ МОДАЛКА УВЕДОМЛЕНИЙ -->
+    <div id="info-modal" class="glass-modal-overlay z-[100]">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-sm text-center shadow-2xl">
+            <h3 id="info-title" class="text-xl font-bold text-white mb-2">Внимание</h3>
+            <p id="info-msg" class="text-slate-400 mb-6"></p>
+            <button onclick="closeModal('info-modal')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-xl transition-colors">Понятно</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛКА ПОДТВЕРЖДЕНИЯ -->
+    <div id="confirm-modal" class="glass-modal-overlay z-[100]">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-sm text-center shadow-2xl">
+            <h3 class="text-xl font-bold text-rose-500 mb-2">Подтверждение</h3>
+            <p id="confirm-msg" class="text-slate-400 mb-6">Вы уверены?</p>
+            <div class="flex gap-3">
+                <button onclick="closeModal('confirm-modal')" class="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 px-4 rounded-xl transition-colors">Отмена</button>
+                <button id="confirm-action-btn" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-semibold py-2 px-4 rounded-xl transition-colors">Удалить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- АВТОРИЗАЦИЯ -->
+    <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="glass-panel p-8 rounded-3xl w-full max-w-md">
+            <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 text-center mb-8">SaaS Monitor</h2>
+            
+            <div class="flex rounded-xl bg-slate-800/50 p-1 mb-6">
+                <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 py-2 text-sm font-semibold rounded-lg bg-blue-600 text-white shadow transition-all">Вход</button>
+                <button id="tab-register" onclick="switchAuthTab('register')" class="flex-1 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition-all">Регистрация</button>
+            </div>
+
+            <div id="form-login" class="space-y-4">
+                <input type="email" id="login-email" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors" placeholder="Email">
+                <input type="password" id="login-password" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors" placeholder="Пароль">
+                <button id="btn-login" onclick="login()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-900/50 transition-all"><span>Войти</span></button>
+            </div>
+
+            <div id="form-register" class="space-y-4 hidden">
+                <input type="text" id="reg-username" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors" placeholder="Никнейм (без @, только a-z, 0-9, _)">
+                <input type="email" id="reg-email" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors" placeholder="Email">
+                <input type="password" id="reg-password" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors" placeholder="Пароль">
+                <button id="btn-register" onclick="register()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-emerald-900/50 transition-all"><span>Создать аккаунт</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ГЛАВНЫЙ ЭКРАН -->
+    <div id="app-screen" class="hidden min-h-screen flex flex-col">
+        <nav class="glass-panel sticky top-0 z-40 border-b border-slate-800/50 rounded-none shadow-sm px-6 py-4">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <h1 class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 tracking-tight">SaaS Monitor</h1>
+                <div class="flex items-center gap-4">
+                    <span id="user-greeting" class="font-semibold text-slate-300"></span>
+                    <button onclick="logout()" class="text-sm font-medium text-slate-400 hover:text-white transition-colors">Выйти</button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="flex-1 w-full max-w-7xl mx-auto px-6 py-8">
+            <div id="global-admin-panel" class="glass-panel border-l-4 border-l-rose-500 p-4 rounded-xl mb-8 flex justify-between items-center hidden">
+                <span class="font-bold text-rose-400">SuperAdmin Mode</span>
+                <button onclick="exportData()" class="bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors">Скачать Backup БД</button>
+            </div>
+
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-1">Рабочие пространства</h2>
+                    <p class="text-slate-400 text-sm">Управляйте группами, серверами и доступом команды</p>
+                </div>
+                <button onclick="openModal('create-group-modal')" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg shadow-blue-900/30 transition-all">+ Новая группа</button>
+            </div>
+
+            <!-- СЕТКА ГРУПП (GRID) -->
+            <div id="dashboard-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                <!-- Генерируется через JS -->
+            </div>
+        </main>
+    </div>
+
+    <!-- МОДАЛКИ ДЕЙСТВИЙ -->
+
+    <!-- Создание группы -->
+    <div id="create-group-modal" class="glass-modal-overlay">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-white">Создание группы</h3>
+                <button onclick="closeModal('create-group-modal')" class="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            <input type="text" id="new-group-name" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 mb-6" placeholder="Название группы">
+            <button id="btn-create-group" onclick="createGroup()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-colors"><span>Создать</span></button>
+        </div>
+    </div>
+
+    <!-- Переименование группы -->
+    <div id="rename-group-modal" class="glass-modal-overlay">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-white">Переименовать группу</h3>
+                <button onclick="closeModal('rename-group-modal')" class="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            <input type="hidden" id="rename-ws-id">
+            <input type="text" id="rename-group-name" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 mb-6" placeholder="Новое название">
+            <button id="btn-rename-group" onclick="renameGroup()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-colors"><span>Сохранить</span></button>
+        </div>
+    </div>
+
+    <!-- Добавление сервера -->
+    <div id="server-modal" class="glass-modal-overlay">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-lg shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="server-modal-title" class="text-xl font-bold text-white">Добавление сервера</h3>
+                <button onclick="closeModal('server-modal')" class="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            
+            <div id="server-modal-step-1" class="space-y-4">
+                <input type="hidden" id="server-workspace-id">
+                <input type="text" id="new-host" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500" placeholder="Название хоста (web-01)">
+                <input type="text" id="new-ip" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500" placeholder="IP Адрес">
+                <button id="btn-create-server" onclick="createServer()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-colors mt-2"><span>Зарегистрировать</span></button>
+            </div>
+
+            <div id="server-modal-step-2" class="hidden">
+                <div class="bg-blue-900/30 border border-blue-500/30 text-blue-400 px-4 py-3 rounded-xl font-semibold text-center mb-4">Сервер зарегистрирован!</div>
+                <p class="text-slate-300 mb-2 text-sm">Выполните команду от имени <b>root</b>:</p>
+                <div class="bg-black/50 p-4 rounded-xl font-mono text-sm text-slate-300 break-all mb-4 border border-slate-700" id="install-command"></div>
+                <button onclick="copyText('install-command', 'Команда скопирована!')" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-xl transition-colors">Скопировать команду</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Перемещение сервера (Трансфер) -->
+    <div id="move-server-modal" class="glass-modal-overlay">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-white">Перемещение сервера</h3>
+                <button onclick="closeModal('move-server-modal')" class="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            <p class="text-slate-400 text-sm mb-4">Выберите группу, в которую нужно перенести этот сервер.</p>
+            <input type="hidden" id="move-server-id">
+            <select id="move-target-ws" class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 mb-6 appearance-none">
+                <!-- Заполняется через JS -->
+            </select>
+            <button id="btn-move-server" onclick="moveServer()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-colors"><span>Переместить</span></button>
+        </div>
+    </div>
+
+    <!-- Приглашение участника -->
+    <div id="invite-modal" class="glass-modal-overlay">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-white">Пригласить коллегу</h3>
+                <button onclick="closeModal('invite-modal')" class="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            <input type="hidden" id="invite-workspace-id">
+            <div class="flex gap-2 mb-2">
+                <input type="text" id="invite-username" class="flex-1 bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500" placeholder="@username">
+                <button id="btn-invite" onclick="inviteColleague()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 rounded-xl transition-colors"><span>Найти</span></button>
+            </div>
+            <div id="invite-link-container" class="hidden mt-6">
+                <p class="text-emerald-400 text-sm font-semibold mb-2">Отправьте эту ссылку участнику:</p>
+                <div class="flex gap-2">
+                    <div class="flex-1 bg-black/50 border border-slate-700 p-3 rounded-xl font-mono text-sm text-slate-300 break-all" id="invite-link-text"></div>
+                    <button onclick="copyText('invite-link-text', 'Ссылка скопирована!')" class="bg-slate-700 hover:bg-slate-600 text-white font-semibold px-4 rounded-xl transition-colors">Копия</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api';
+        let currentWorkspaces = [];
+
+        // --- UX УТИЛИТЫ ---
+        function showInfo(title, msg) {
+            document.getElementById('info-title').innerText = title;
+            document.getElementById('info-msg').innerText = msg;
+            openModal('info-modal');
+        }
+        function showConfirm(msg, actionFn) {
+            document.getElementById('confirm-msg').innerText = msg;
+            const btn = document.getElementById('confirm-action-btn');
+            btn.onclick = () => { actionFn(); closeModal('confirm-modal'); };
+            openModal('confirm-modal');
+        }
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { 
+            document.getElementById(id).classList.remove('active'); 
+            if(id !== 'info-modal' && id !== 'confirm-modal') loadDashboard();
+        }
+
+        function setBtnLoading(btnId, isLoading) {
+            const btn = document.getElementById(btnId);
+            if (isLoading) btn.classList.add('btn-loading');
+            else btn.classList.remove('btn-loading');
+        }
+
+        function copyText(elementId, successMsg) {
+            const text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text).then(() => showInfo("Успех", successMsg))
+                .catch(() => {
+                    const temp = document.createElement("textarea"); temp.value = text;
+                    document.body.appendChild(temp); temp.select(); document.execCommand("copy"); temp.remove();
+                    showInfo("Успех", successMsg);
+                });
+        }
+
+        // --- AUTH ---
+        function switchAuthTab(tab) {
+            const isLogin = tab === 'login';
+            document.getElementById('form-login').classList.toggle('hidden', !isLogin);
+            document.getElementById('form-register').classList.toggle('hidden', isLogin);
+            
+            const btnLog = document.getElementById('tab-login');
+            const btnReg = document.getElementById('tab-register');
+            
+            btnLog.className = isLogin ? 'flex-1 py-2 text-sm font-semibold rounded-lg bg-blue-600 text-white shadow transition-all' : 'flex-1 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition-all';
+            btnReg.className = !isLogin ? 'flex-1 py-2 text-sm font-semibold rounded-lg bg-emerald-600 text-white shadow transition-all' : 'flex-1 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition-all';
+        }
+
+        async function login() {
+            const e = document.getElementById('login-email').value, p = document.getElementById('login-password').value;
+            if(!e || !p) return showInfo('Ошибка', "Заполните все поля");
+            setBtnLoading('btn-login', true);
+            const res = await fetch(`${API_URL}/login`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email: e, password: p}) });
+            setBtnLoading('btn-login', false);
+            if (res.ok) { saveAuth(await res.json()); } else showInfo('Ошибка', "Неверная почта или пароль");
+        }
+
+        async function register() {
+            const u = document.getElementById('reg-username').value.trim(), e = document.getElementById('reg-email').value, p = document.getElementById('reg-password').value;
+            if(!u || !e || !p) return showInfo('Ошибка', "Заполните все поля");
+            if(!/^[a-zA-Z0-9_]{3,30}$/.test(u.replace('@',''))) return showInfo('Ошибка', "Никнейм должен быть от 3 до 30 символов, только a-z, 0-9 и _");
+            setBtnLoading('btn-register', true);
+            const res = await fetch(`${API_URL}/users`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: u.replace('@',''), email: e, password: p}) });
+            setBtnLoading('btn-register', false);
+            if (res.ok) {
+                document.getElementById('login-email').value = e; document.getElementById('login-password').value = p;
+                showInfo('Успех', 'Аккаунт создан! Входим...'); setTimeout(login, 1500);
+            } else showInfo('Ошибка', (await res.json()).detail || "Произошла ошибка");
+        }
+
+        function saveAuth(data) {
+            localStorage.setItem('token', data.token); localStorage.setItem('role', data.role); localStorage.setItem('username', data.username);
+            checkAuth();
+        }
+        function logout() { localStorage.clear(); checkAuth(); }
+        function getHeaders() { return { 'Authorization': `Bearer ${localStorage.getItem('token')}`, 'Content-Type': 'application/json' }; }
+
+        async function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (token && token !== "undefined") {
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('app-screen').classList.remove('hidden');
+                document.getElementById('user-greeting').innerText = `@${localStorage.getItem('username')}`;
+                document.getElementById('global-admin-panel').classList.toggle('hidden', localStorage.getItem('role') !== 'global_admin');
+                loadDashboard();
+            } else {
+                document.getElementById('auth-screen').classList.remove('hidden');
+                document.getElementById('app-screen').classList.add('hidden');
+            }
+        }
+
+        // --- DASHBOARD ---
+        async function loadDashboard() {
+            const res = await fetch(`${API_URL}/dashboard`, { headers: getHeaders() });
+            if (res.status === 401) { logout(); return; }
+            
+            currentWorkspaces = await res.json();
+            const grid = document.getElementById('dashboard-grid');
+            grid.innerHTML = '';
+            
+            if(currentWorkspaces.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center text-slate-500 py-12">У вас пока нет групп. Создайте первую!</div>';
+                return;
+            }
+
+            currentWorkspaces.forEach(ws => {
+                let ownerActions = ws.is_owner ? `
+                    <div class="flex gap-1">
+                        <button onclick="openRenameModal(${ws.id}, '${ws.name.replace(/'/g, "\\'")}')" class="text-slate-400 hover:text-blue-400 transition" title="Переименовать">✏️</button>
+                        <button onclick="deleteWorkspace(${ws.id}, '${ws.name.replace(/'/g, "\\'")}')" class="text-slate-400 hover:text-rose-400 transition" title="Удалить">🗑</button>
+                    </div>` : '';
+                
+                let addMemberBtn = ws.is_owner ? `<button onclick="openInviteModal(${ws.id})" class="text-xs bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 px-2 py-1 rounded transition">+ юзер</button>` : '';
+
+                let serversHtml = ws.servers.length === 0 
+                    ? '<div class="text-center text-slate-500 text-sm py-4 border-t border-slate-700/50 border-dashed mt-4">Нет серверов</div>' 
+                    : ws.servers.map(s => `
+                        <div class="flex items-center justify-between py-3 border-b border-slate-700/50 last:border-0 group">
+                            <div class="overflow-hidden">
+                                <div class="font-semibold text-slate-200 truncate">${s.hostname}</div>
+                                <div class="text-xs text-slate-500 font-mono">${s.ip_address}</div>
+                            </div>
+                            <div class="flex items-center gap-2 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onclick="viewMonitoring('${s.hostname}')" class="text-xs bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 px-2 py-1 rounded" title="Логи">📊</button>
+                                <button onclick="showAgentCommand('${s.agent_token}')" class="text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 px-2 py-1 rounded" title="Скрипт агента">⚙️</button>
+                                <button onclick="openMoveModal(${s.id}, ${ws.id})" class="text-xs bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 px-2 py-1 rounded" title="Переместить">➡️</button>
+                                <button onclick="deleteServer(${s.id}, '${s.hostname}')" class="text-xs bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 px-2 py-1 rounded" title="Удалить">✕</button>
+                            </div>
+                        </div>
+                    `).join('');
+
+                let membersHtml = ws.members.map(m => `<span class="inline-block bg-slate-800 border border-slate-700 text-slate-300 text-xs px-2 py-0.5 rounded-full mt-1 me-1">@${m.username}</span>`).join('');
+
+                grid.innerHTML += `
+                <div class="glass-panel p-5 rounded-2xl flex flex-col h-full">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="text-lg font-bold text-white truncate pe-2">${ws.name}</h3>
+                        ${ownerActions}
+                    </div>
+                    <div class="mb-4 flex-1">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Участники</span>
+                            ${addMemberBtn}
+                        </div>
+                        <div class="mb-4">${membersHtml}</div>
+                        
+                        <div class="flex justify-between items-center mb-2 mt-6 border-t border-slate-700/50 pt-4">
+                            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Серверы</span>
+                            <button onclick="openAddServerModal(${ws.id})" class="text-xs bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 rounded transition shadow">+ сервер</button>
+                        </div>
+                        <div class="bg-slate-900/50 rounded-xl px-3 border border-slate-800">
+                            ${serversHtml}
+                        </div>
+                    </div>
+                </div>`;
+            });
+        }
+
+        // --- GROUP ACTIONS ---
+        async function createGroup() {
+            const name = document.getElementById('new-group-name').value;
+            if(!name) return;
+            setBtnLoading('btn-create-group', true);
+            const res = await fetch(`${API_URL}/workspaces`, { method: 'POST', headers: getHeaders(), body: JSON.stringify({name}) });
+            setBtnLoading('btn-create-group', false);
+            if(res.ok) closeModal('create-group-modal'); else showInfo('Ошибка', 'Сбой создания');
+        }
+
+        function openRenameModal(id, currentName) {
+            document.getElementById('rename-ws-id').value = id;
+            document.getElementById('rename-group-name').value = currentName;
+            openModal('rename-group-modal');
+        }
+
+        async function renameGroup() {
+            const id = document.getElementById('rename-ws-id').value;
+            const name = document.getElementById('rename-group-name').value;
+            if(!name) return;
+            setBtnLoading('btn-rename-group', true);
+            const res = await fetch(`${API_URL}/workspaces/${id}`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify({name}) });
+            setBtnLoading('btn-rename-group', false);
+            if(res.ok) closeModal('rename-group-modal'); else showInfo('Ошибка', (await res.json()).detail);
+        }
+
+        function deleteWorkspace(id, name) {
+            showConfirm(`Внимание! Удаление группы "${name}" навсегда уничтожит все серверы внутри нее. Продолжить?`, async () => {
+                const res = await fetch(`${API_URL}/workspaces/${id}`, { method: 'DELETE', headers: getHeaders() });
+                if(res.ok) loadDashboard(); else showInfo("Ошибка", (await res.json()).detail);
+            });
+        }
+
+        // --- INVITES ---
+        function openInviteModal(wsId) {
+            document.getElementById('invite-workspace-id').value = wsId;
+            document.getElementById('invite-username').value = '';
+            document.getElementById('invite-link-container').classList.add('hidden');
+            openModal('invite-modal');
+        }
+
+        async function inviteColleague() {
+            const u = document.getElementById('invite-username').value, wsId = document.getElementById('invite-workspace-id').value;
+            if(!u) return;
+            setBtnLoading('btn-invite', true);
+            const res = await fetch(`${API_URL}/team/invite`, { method: 'POST', headers: getHeaders(), body: JSON.stringify({username: u, workspace_id: parseInt(wsId)}) });
+            setBtnLoading('btn-invite', false);
+            const data = await res.json();
+            if (res.ok) {
+                document.getElementById('invite-username').value = '';
+                document.getElementById('invite-link-text').innerText = data.invite_link;
+                document.getElementById('invite-link-container').classList.remove('hidden');
+                loadDashboard();
+            } else showInfo('Ошибка', data.detail);
+        }
+
+        // --- SERVERS ---
+        function openAddServerModal(wsId) {
+            document.getElementById('server-workspace-id').value = wsId;
+            document.getElementById('new-host').value = ''; document.getElementById('new-ip').value = '';
+            document.getElementById('server-modal-step-1').classList.remove('hidden');
+            document.getElementById('server-modal-step-2').classList.add('hidden');
+            document.getElementById('server-modal-title').innerText = "Добавление сервера";
+            openModal('server-modal');
+        }
+
+        async function createServer() {
+            const data = { hostname: document.getElementById('new-host').value, ip_address: document.getElementById('new-ip').value, workspace_id: parseInt(document.getElementById('server-workspace-id').value) };
+            if(!data.hostname || !data.ip_address) return showInfo("Внимание", "Заполните все поля!");
+            setBtnLoading('btn-create-server', true);
+            const res = await fetch(`${API_URL}/servers`, { method: 'POST', headers: getHeaders(), body: JSON.stringify(data) });
+            setBtnLoading('btn-create-server', false);
+            if (res.ok) showAgentCommand((await res.json()).agent_token); else showInfo("Ошибка", (await res.json()).detail);
+        }
+
+        function showAgentCommand(token) {
+            document.getElementById('server-modal-step-1').classList.add('hidden');
+            document.getElementById('server-modal-step-2').classList.remove('hidden');
+            document.getElementById('server-modal-title').innerText = "Настройка агента";
+            document.getElementById('install-command').innerText = `curl -sL https://inv.e-laba52.ru/agent.sh | sudo bash -s -- --token=${token}`;
+            openModal('server-modal');
+        }
+
+        // Трансфер сервера
+        function openMoveModal(serverId, currentWsId) {
+            const select = document.getElementById('move-target-ws');
+            select.innerHTML = currentWorkspaces
+                .filter(ws => ws.id !== currentWsId) // Не показываем текущую группу
+                .map(ws => `<option value="${ws.id}">${ws.name}</option>`)
+                .join('');
+            
+            if(select.innerHTML === '') {
+                showInfo("Некуда перемещать", "Вы состоите только в одной группе.");
+                return;
+            }
+            document.getElementById('move-server-id').value = serverId;
+            openModal('move-server-modal');
+        }
+
+        async function moveServer() {
+            const serverId = document.getElementById('move-server-id').value;
+            const targetWsId = document.getElementById('move-target-ws').value;
+            setBtnLoading('btn-move-server', true);
+            const res = await fetch(`${API_URL}/servers/${serverId}/move`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify({target_workspace_id: parseInt(targetWsId)}) });
+            setBtnLoading('btn-move-server', false);
+            if(res.ok) closeModal('move-server-modal'); else showInfo("Ошибка", (await res.json()).detail);
+        }
+
+        function viewMonitoring(hostname) { showInfo(`Логи: ${hostname}`, "Данные собираются! Grafana — наш следующий шаг."); }
+
+        function deleteServer(id, hostname) {
+            showConfirm(`Удалить сервер ${hostname}? Агент перестанет присылать логи.`, async () => {
+                const res = await fetch(`${API_URL}/servers/${id}`, { method: 'DELETE', headers: getHeaders() });
+                if(res.ok) loadDashboard(); else showInfo("Ошибка", "Сбой удаления.");
+            });
+        }
+
+        function exportData() {
+            fetch('/api/export', { headers: getHeaders() })
+                .then(r => r.blob()).then(b => {
+                    const u = window.URL.createObjectURL(b); const a = document.createElement('a');
+                    a.href = u; a.download = "backup.json"; document.body.appendChild(a); a.click(); a.remove();
+                });
+        }
+
+        if (!localStorage.getItem('token') || localStorage.getItem('token') === "undefined") logout(); else checkAuth();
     </script>
 </body>
 </html>
