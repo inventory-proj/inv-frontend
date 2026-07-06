@@ -24,32 +24,21 @@
     </script>
     <style>
         body {
-            background-color: #f8fafc;
-            color: #0f172a;
-            min-height: 100vh;
-            font-family: 'Inter', system-ui, sans-serif;
-            overflow-x: hidden;
+            background-color: #f8fafc; color: #0f172a; min-height: 100vh;
+            font-family: 'Inter', system-ui, sans-serif; overflow-x: hidden;
         }
-
         .glass-panel {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            box-shadow: 0 10px 40px -10px rgba(148, 163, 184, 0.1);
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(226, 232, 240, 0.8); box-shadow: 0 10px 40px -10px rgba(148, 163, 184, 0.1);
         }
-
         .glass-modal-overlay {
-            position: fixed; inset: 0; z-index: 50;
-            background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px);
-            display: flex; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+            position: fixed; inset: 0; z-index: 50; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px);
+            display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
         .glass-modal-overlay.active { opacity: 1; pointer-events: auto; }
         .glass-modal-content {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            transform: scale(0.95) translateY(10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            background: #ffffff; border: 1px solid #e2e8f0; transform: scale(0.95) translateY(10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); max-height: 90vh; overflow-y: auto;
         }
         .glass-modal-overlay.active .glass-modal-content { transform: scale(1) translateY(0); }
 
@@ -64,50 +53,36 @@
             border: 2px solid rgba(0,0,0,0.2); border-top-color: currentColor; border-radius: 50%; animation: spin 0.8s linear infinite;
         }
 
-        .btn-neon-blue {
-            border: 1.5px solid #3b82f6; color: #2563eb; background: #ffffff; transition: all 0.2s ease;
-        }
-        .btn-neon-blue:hover {
-            background: #eff6ff; box-shadow: 0 0 12px rgba(59, 130, 246, 0.4); border-color: #2563eb;
-        }
-        
-        .btn-neon-green {
-            border: 1.5px solid #10b981; color: #059669; background: #ffffff; transition: all 0.2s ease;
-        }
-        .btn-neon-green:hover {
-            background: #ecfdf5; box-shadow: 0 0 12px rgba(16, 185, 129, 0.4); border-color: #059669;
-        }
-
-        .btn-neon-red {
-            border: 1.5px solid #f43f5e; color: #e11d48; background: #ffffff; transition: all 0.2s ease;
-        }
-        .btn-neon-red:hover {
-            background: #fff1f2; box-shadow: 0 0 12px rgba(244, 63, 94, 0.4); border-color: #e11d48;
-        }
-        
-        .btn-neon-amber {
-            border: 1.5px solid #f59e0b; color: #d97706; background: #ffffff; transition: all 0.2s ease;
-        }
-        .btn-neon-amber:hover {
-            background: #fffbeb; box-shadow: 0 0 12px rgba(245, 158, 11, 0.4); border-color: #d97706;
-        }
+        .btn-neon-blue { border: 1.5px solid #3b82f6; color: #2563eb; background: #ffffff; transition: all 0.2s ease; }
+        .btn-neon-blue:hover { background: #eff6ff; box-shadow: 0 0 12px rgba(59, 130, 246, 0.4); border-color: #2563eb; }
+        .btn-neon-green { border: 1.5px solid #10b981; color: #059669; background: #ffffff; transition: all 0.2s ease; }
+        .btn-neon-green:hover { background: #ecfdf5; box-shadow: 0 0 12px rgba(16, 185, 129, 0.4); border-color: #059669; }
+        .btn-neon-red { border: 1.5px solid #f43f5e; color: #e11d48; background: #ffffff; transition: all 0.2s ease; }
+        .btn-neon-red:hover { background: #fff1f2; box-shadow: 0 0 12px rgba(244, 63, 94, 0.4); border-color: #e11d48; }
+        .btn-neon-amber { border: 1.5px solid #f59e0b; color: #d97706; background: #ffffff; transition: all 0.2s ease; }
+        .btn-neon-amber:hover { background: #fffbeb; box-shadow: 0 0 12px rgba(245, 158, 11, 0.4); border-color: #d97706; }
 
         .accordion-content { transition: max-height 0.4s ease-in-out, opacity 0.3s ease; max-height: 0; opacity: 0; overflow: hidden; }
-        .accordion-content.expanded { max-height: 2000px; opacity: 1; }
+        .accordion-content.expanded { max-height: 3000px; opacity: 1; }
         .chevron { transition: transform 0.3s ease; }
         .chevron.expanded { transform: rotate(180deg); }
+
+        /* Окно терминала логов */
+        .terminal-bg { background-color: #0f172a; color: #38bdf8; font-family: 'JetBrains Mono', Consolas, monospace; }
+        .tab-active { background-color: #3b82f6; color: white; border-color: #3b82f6; }
+        .tab-inactive { background-color: #f1f5f9; color: #64748b; border-color: #e2e8f0; }
+        .tab-inactive:hover { background-color: #e2e8f0; color: #334155; }
+        .log-line { word-break: break-all; white-space: pre-wrap; padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
 <body class="antialiased relative selection:bg-blue-500/20">
 
-    <!-- Фоновые градиенты -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none -z-20">
         <div class="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-300/30 rounded-full mix-blend-multiply filter blur-[100px] animate-blob"></div>
         <div class="absolute top-[20%] right-[-10%] w-[500px] h-[500px] bg-emerald-300/30 rounded-full mix-blend-multiply filter blur-[100px] animate-blob" style="animation-delay: 2s;"></div>
         <div class="absolute bottom-[-20%] left-[20%] w-[700px] h-[700px] bg-purple-200/40 rounded-full mix-blend-multiply filter blur-[100px] animate-blob" style="animation-delay: 4s;"></div>
     </div>
 
-    <!-- УНИВЕРСАЛЬНАЯ МОДАЛКА УВЕДОМЛЕНИЙ -->
     <div id="info-modal" class="glass-modal-overlay z-[100]" onclick="closeModal('info-modal')">
         <div class="glass-modal-content p-6 rounded-2xl w-full max-w-sm text-center" onclick="stopProp(event)">
             <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-50 mb-4">
@@ -119,7 +94,6 @@
         </div>
     </div>
 
-    <!-- МОДАЛКА ПОДТВЕРЖДЕНИЯ -->
     <div id="confirm-modal" class="glass-modal-overlay z-[100]" onclick="closeModal('confirm-modal')">
         <div class="glass-modal-content p-6 rounded-2xl w-full max-w-sm text-center" onclick="stopProp(event)">
             <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-rose-50 mb-4">
@@ -138,7 +112,6 @@
     <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4">
         <div class="glass-panel p-8 rounded-3xl w-full max-w-md relative overflow-hidden shadow-2xl">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400 to-emerald-400"></div>
-            
             <h2 class="text-3xl font-extrabold text-slate-800 text-center mb-2 tracking-tight">SaaS Monitor</h2>
             <p class="text-slate-500 text-center mb-8 text-sm">Управление серверной инфраструктурой</p>
             
@@ -148,15 +121,15 @@
             </div>
 
             <div id="form-login" class="space-y-4">
-                <input type="email" id="login-email" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all" placeholder="E-mail адрес">
-                <input type="password" id="login-password" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all" placeholder="Пароль">
+                <input type="email" id="login-email" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-all" placeholder="E-mail адрес">
+                <input type="password" id="login-password" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-all" placeholder="Пароль">
                 <button id="btn-login" onclick="login()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl shadow-md shadow-blue-500/20 transition-all mt-2">Войти в панель</button>
             </div>
 
             <div id="form-register" class="space-y-4 hidden">
-                <input type="text" id="reg-username" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all" placeholder="Уникальный @никнейм">
-                <input type="email" id="reg-email" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all" placeholder="Ваш E-mail">
-                <input type="password" id="reg-password" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all" placeholder="Надежный пароль">
+                <input type="text" id="reg-username" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-all" placeholder="Уникальный @никнейм">
+                <input type="email" id="reg-email" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-all" placeholder="Ваш E-mail">
+                <input type="password" id="reg-password" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-all" placeholder="Надежный пароль">
                 <button id="btn-register" onclick="register()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow-md shadow-emerald-500/20 transition-all mt-2">Создать аккаунт</button>
             </div>
         </div>
@@ -164,7 +137,6 @@
 
     <!-- ГЛАВНЫЙ ЭКРАН -->
     <div id="app-screen" class="hidden min-h-screen flex flex-col">
-        <!-- Навбар -->
         <nav class="glass-panel sticky top-0 z-40 border-b border-slate-200 rounded-none shadow-sm px-6 py-4">
             <div class="max-w-[1400px] mx-auto flex justify-between items-center">
                 <div class="flex items-center gap-3">
@@ -177,32 +149,24 @@
                     <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                     <span id="user-greeting" class="font-semibold text-slate-700 text-sm"></span>
                     <div class="w-px h-4 bg-slate-300"></div>
-                    <button onclick="logout()" class="text-sm font-medium text-slate-500 hover:text-rose-500 transition-colors flex items-center gap-1">
-                        Выйти <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-                    </button>
+                    <button onclick="logout()" class="text-sm font-medium text-slate-500 hover:text-rose-500 transition-colors flex items-center gap-1">Выйти</button>
                 </div>
             </div>
         </nav>
 
         <main class="flex-1 w-full max-w-[1400px] mx-auto px-4 sm:px-6 py-8">
             <div id="global-admin-panel" class="glass-panel border-l-4 border-l-rose-500 p-4 rounded-xl mb-8 flex justify-between items-center hidden shadow-sm">
-                <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                    <span class="font-bold text-rose-600">Панель Супер-Администратора</span>
-                </div>
-                <button onclick="exportData()" class="bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg> Бэкап БД
-                </button>
+                <span class="font-bold text-rose-600">Панель Супер-Администратора</span>
+                <button onclick="exportData()" class="bg-rose-50 border border-rose-200 text-rose-600 px-4 py-2 rounded-lg text-sm font-semibold transition-colors">Бэкап БД</button>
             </div>
 
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
                 <div>
                     <h2 class="text-3xl font-bold text-slate-800 mb-2 tracking-tight">Рабочие пространства</h2>
-                    <p class="text-slate-500 text-sm">Организуйте серверы по проектам и управляйте доступом.</p>
+                    <p class="text-slate-500 text-sm">Данные обновляются автоматически в реальном времени.</p>
                 </div>
                 <button onclick="openModal('create-group-modal')" class="btn-neon-blue px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-sm">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                    Новая группа
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg> Новая группа
                 </button>
             </div>
 
@@ -212,132 +176,117 @@
         </main>
     </div>
 
-    <!-- ================= МОДАЛЬНЫЕ ОКНА ДЕЙСТВИЙ ================= -->
+    <!-- ================= МОДАЛКА МОНИТОРИНГА (ТЕРМИНАЛ) ================= -->
+    <div id="monitoring-modal" class="glass-modal-overlay" onclick="closeModal('monitoring-modal')">
+        <div class="glass-modal-content rounded-2xl w-full max-w-5xl overflow-hidden shadow-2xl flex flex-col h-[85vh]" onclick="stopProp(event)">
+            <!-- Заголовок -->
+            <div class="bg-slate-50 border-b border-slate-200 p-4 flex justify-between items-center shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800" id="mon-hostname">server-name</h3>
+                        <p class="text-xs text-slate-500 font-mono" id="mon-ip">127.0.0.1</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('monitoring-modal')" class="text-slate-400 hover:text-slate-700 transition-colors"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
+            </div>
+            
+            <!-- Вкладки -->
+            <div class="bg-slate-100 border-b border-slate-200 p-2 flex gap-2 shrink-0">
+                <button onclick="switchMonTab('metrics')" id="tab-mon-metrics" class="px-4 py-2 rounded-lg text-sm font-semibold border tab-active transition-colors flex items-center gap-2">📈 Метрики</button>
+                <button onclick="switchMonTab('syslog')" id="tab-mon-syslog" class="px-4 py-2 rounded-lg text-sm font-semibold border tab-inactive transition-colors flex items-center gap-2">📝 Syslog</button>
+                <button onclick="switchMonTab('docker')" id="tab-mon-docker" class="px-4 py-2 rounded-lg text-sm font-semibold border tab-inactive transition-colors flex items-center gap-2">🐳 Docker</button>
+            </div>
+
+            <!-- Контент вкладок -->
+            <div class="flex-1 overflow-hidden relative bg-white flex flex-col">
+                
+                <!-- Вкладка Метрик (Заглушка) -->
+                <div id="content-mon-metrics" class="p-6 h-full overflow-y-auto">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                        <div class="border border-slate-200 rounded-xl p-4 bg-slate-50"><p class="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">CPU Load</p><p class="text-2xl font-bold text-slate-800">-- %</p></div>
+                        <div class="border border-slate-200 rounded-xl p-4 bg-slate-50"><p class="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">Memory Usage</p><p class="text-2xl font-bold text-slate-800">-- / -- GB</p></div>
+                        <div class="border border-slate-200 rounded-xl p-4 bg-slate-50"><p class="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">Disk I/O</p><p class="text-2xl font-bold text-slate-800">-- MB/s</p></div>
+                        <div class="border border-slate-200 rounded-xl p-4 bg-slate-50"><p class="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">Network (Tx/Rx)</p><p class="text-2xl font-bold text-slate-800">-- / -- Mbps</p></div>
+                    </div>
+                    <div class="border border-amber-200 bg-amber-50 p-6 rounded-xl text-center">
+                        <svg class="w-12 h-12 text-amber-500 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        <h4 class="text-lg font-bold text-amber-800 mb-2">Метрики пока недоступны</h4>
+                        <p class="text-sm text-amber-700">Перейдите на вкладки Syslog или Docker для просмотра живых логов.</p>
+                    </div>
+                </div>
+
+                <!-- Вкладка Syslog -->
+                <div id="content-mon-syslog" class="hidden h-full terminal-bg flex flex-col">
+                    <div class="p-4 border-b border-slate-700 flex justify-between items-center shrink-0">
+                        <span class="text-slate-400 text-sm">Соединение с K8s Loki... Трансляция /var/log/syslog</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-slate-500">Live</span>
+                            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                        </div>
+                    </div>
+                    <div id="syslog-feed" class="p-4 overflow-y-auto flex-1 text-sm space-y-1"></div>
+                </div>
+
+                <!-- Вкладка Docker logs -->
+                <div id="content-mon-docker" class="hidden h-full terminal-bg flex flex-col">
+                    <div class="p-4 border-b border-slate-700 flex justify-between items-center shrink-0">
+                        <span class="text-slate-400 text-sm">Трансляция логов Docker контейнеров</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-slate-500">Live</span>
+                            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                        </div>
+                    </div>
+                    <div id="docker-feed" class="p-4 overflow-y-auto flex-1 text-sm space-y-1"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= ПРОЧИЕ МОДАЛКИ ДЕЙСТВИЙ ================= -->
     <div id="create-group-modal" class="glass-modal-overlay" onclick="closeModal('create-group-modal')">
         <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md" onclick="stopProp(event)">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-slate-900">Новая группа</h3>
-                <button onclick="closeModal('create-group-modal')" class="text-slate-400 hover:text-slate-600 transition-colors"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
-            </div>
-            <input type="text" id="new-group-name" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 mb-6 focus:outline-none focus:border-blue-500" placeholder="Название (например: Backend Team)">
+            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Новая группа</h3><button onclick="closeModal('create-group-modal')" class="text-slate-400 hover:text-slate-600 transition-colors"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
+            <input type="text" id="new-group-name" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 mb-6" placeholder="Название">
             <button id="btn-create-group" onclick="createGroup()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-all shadow-md">Создать группу</button>
         </div>
     </div>
 
     <div id="rename-group-modal" class="glass-modal-overlay" onclick="closeModal('rename-group-modal')">
-        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md" onclick="stopProp(event)">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-slate-900">Переименовать группу</h3>
-                <button onclick="closeModal('rename-group-modal')" class="text-slate-400 hover:text-slate-600 transition-colors"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
-            </div>
-            <input type="hidden" id="rename-ws-id">
-            <input type="text" id="rename-group-name" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 mb-6 focus:outline-none focus:border-blue-500">
-            <button id="btn-rename-group" onclick="renameGroup()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-all shadow-md">Сохранить изменения</button>
-        </div>
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md" onclick="stopProp(event)"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Переименовать группу</h3><button onclick="closeModal('rename-group-modal')" class="text-slate-400 hover:text-slate-600 transition-colors"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div><input type="hidden" id="rename-ws-id"><input type="text" id="rename-group-name" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 mb-6"><button id="btn-rename-group" onclick="renameGroup()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-all shadow-md">Сохранить</button></div>
     </div>
 
     <div id="server-modal" class="glass-modal-overlay" onclick="closeModal('server-modal')">
         <div class="glass-modal-content p-6 rounded-2xl w-full max-w-lg" onclick="stopProp(event)">
-            <div class="flex justify-between items-center mb-6">
-                <h3 id="server-modal-title" class="text-xl font-bold text-slate-900 flex items-center gap-2">
-                    <svg class="w-6 h-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg>
-                    Добавление сервера
-                </h3>
-                <button onclick="closeModal('server-modal')" class="text-slate-400 hover:text-slate-600 transition-colors"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
-            </div>
-            
+            <div class="flex justify-between items-center mb-6"><h3 id="server-modal-title" class="text-xl font-bold text-slate-900">Добавление сервера</h3><button onclick="closeModal('server-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
             <div id="server-modal-step-1" class="space-y-4">
                 <input type="hidden" id="server-workspace-id">
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Название хоста</label>
-                    <input type="text" id="new-host" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:border-blue-500" placeholder="Например: web-prod-01">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">IP Адрес</label>
-                    <input type="text" id="new-ip" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:border-blue-500" placeholder="192.168.1.100">
-                </div>
-                <button id="btn-create-server" onclick="createServer()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl mt-4 transition-all shadow-md">Зарегистрировать сервер</button>
+                <input type="text" id="new-host" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900" placeholder="Название хоста (web-01)">
+                <input type="text" id="new-ip" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900" placeholder="IP Адрес">
+                <button id="btn-create-server" onclick="createServer()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl mt-4 shadow-md">Зарегистрировать</button>
             </div>
-
             <div id="server-modal-step-2" class="hidden">
-                <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-4 rounded-xl font-semibold text-center mb-6 flex items-center justify-center gap-2">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    Сервер успешно зарегистрирован!
-                </div>
-                <p class="text-slate-600 mb-3 text-sm font-medium">Выполните команду на сервере от имени <code class="bg-slate-100 text-rose-500 px-1.5 py-0.5 rounded border border-slate-200">root</code>:</p>
-                
-                <div class="relative bg-slate-900 p-4 rounded-xl font-mono text-sm text-blue-300 break-all border border-slate-800 shadow-inner mb-4" id="install-command"></div>
-                
-                <div class="flex gap-3 mt-6">
-                    <button onclick="closeModal('server-modal')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 rounded-xl transition-all border border-slate-200">Закрыть</button>
-                    <button onclick="copyText('install-command', 'Команда скопирована!')" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-all shadow-md flex justify-center items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg> Скопировать
-                    </button>
-                </div>
+                <p class="text-slate-600 mb-3 text-sm font-medium">Команда для <code class="bg-slate-100 text-rose-500 px-1.5 py-0.5 rounded border border-slate-200">root</code>:</p>
+                <div class="relative bg-slate-900 p-4 rounded-xl font-mono text-sm text-blue-300 break-all mb-4" id="install-command"></div>
+                <button onclick="copyText('install-command', 'Команда скопирована!')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl">Скопировать</button>
             </div>
         </div>
     </div>
 
     <div id="rename-server-modal" class="glass-modal-overlay" onclick="closeModal('rename-server-modal')">
-        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md" onclick="stopProp(event)">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-slate-900">Переименовать сервер</h3>
-                <button onclick="closeModal('rename-server-modal')" class="text-slate-400 hover:text-slate-600 transition-colors"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
-            </div>
-            <div class="bg-blue-50 border border-blue-100 rounded-lg p-3 mb-6">
-                <p class="text-xs text-blue-700">IP адрес останется прежним. Сменится только отображаемое имя.</p>
-            </div>
-            <input type="hidden" id="rename-server-id">
-            <input type="text" id="rename-server-name" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 mb-6 focus:outline-none focus:border-blue-500">
-            <button id="btn-rename-server" onclick="renameServer()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-all shadow-md">Сохранить</button>
-        </div>
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md" onclick="stopProp(event)"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Имя сервера</h3><button onclick="closeModal('rename-server-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div><input type="hidden" id="rename-server-id"><input type="text" id="rename-server-name" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 mb-6"><button id="btn-rename-server" onclick="renameServer()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl shadow-md">Сохранить</button></div>
     </div>
 
     <div id="move-server-modal" class="glass-modal-overlay" onclick="closeModal('move-server-modal')">
-        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md" onclick="stopProp(event)">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-                    <svg class="w-6 h-6 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg> Перенос сервера
-                </h3>
-                <button onclick="closeModal('move-server-modal')" class="text-slate-400 hover:text-slate-600 transition-colors"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
-            </div>
-            <p class="text-slate-500 text-sm mb-4">Выберите группу, в которую нужно перенести этот сервер.</p>
-            <input type="hidden" id="move-server-id">
-            <div class="relative mb-6">
-                <select id="move-target-ws" class="w-full bg-white border border-slate-300 rounded-xl pl-4 pr-10 py-3 text-slate-900 appearance-none focus:outline-none focus:border-amber-500 cursor-pointer"></select>
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                </div>
-            </div>
-            <button id="btn-move-server" onclick="moveServer()" class="w-full bg-amber-500 hover:bg-amber-400 text-white font-bold py-3 rounded-xl transition-all shadow-md">Перенести</button>
-        </div>
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md" onclick="stopProp(event)"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Перенос сервера</h3><button onclick="closeModal('move-server-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div><input type="hidden" id="move-server-id"><select id="move-target-ws" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 mb-6"></select><button id="btn-move-server" onclick="moveServer()" class="w-full bg-amber-500 hover:bg-amber-400 text-white font-bold py-3 rounded-xl shadow-md">Перенести</button></div>
     </div>
 
     <div id="invite-modal" class="glass-modal-overlay" onclick="closeModal('invite-modal')">
         <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md" onclick="stopProp(event)">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-                    <svg class="w-6 h-6 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg> Добавить в команду
-                </h3>
-                <button onclick="closeModal('invite-modal')" class="text-slate-400 hover:text-slate-600 transition-colors"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
-            </div>
+            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Добавить коллегу</h3><button onclick="closeModal('invite-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
             <input type="hidden" id="invite-workspace-id">
-            <div class="flex gap-2 mb-2">
-                <div class="relative flex-1">
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">@</span>
-                    <input type="text" id="invite-username" class="w-full bg-white border border-slate-300 rounded-xl pl-8 pr-4 py-3 text-slate-900 focus:outline-none focus:border-emerald-500" placeholder="username">
-                </div>
-                <button id="btn-invite" onclick="inviteColleague()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 rounded-xl transition-all shadow-md">Найти</button>
-            </div>
-            <div id="invite-link-container" class="hidden mt-6 bg-emerald-50 p-4 rounded-xl border border-emerald-100">
-                <p class="text-emerald-700 text-sm font-semibold mb-3">✅ Пользователь добавлен! Ссылка-приглашение:</p>
-                <div class="flex gap-2">
-                    <div class="flex-1 bg-white border border-emerald-200 p-3 rounded-lg font-mono text-xs text-slate-600 break-all select-all" id="invite-link-text"></div>
-                    <button onclick="copyText('invite-link-text', 'Ссылка скопирована!')" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-semibold px-4 rounded-lg transition-colors border border-emerald-200" title="Копировать">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
-                    </button>
-                </div>
-            </div>
+            <div class="flex gap-2 mb-2"><input type="text" id="invite-username" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900" placeholder="@username"><button id="btn-invite" onclick="inviteColleague()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 rounded-xl">Найти</button></div>
+            <div id="invite-link-container" class="hidden mt-6 bg-emerald-50 p-4 rounded-xl border border-emerald-100"><p class="text-emerald-700 text-sm font-semibold mb-3">Ссылка-приглашение:</p><div class="flex gap-2"><div class="flex-1 bg-white border border-emerald-200 p-3 rounded-lg font-mono text-xs break-all select-all" id="invite-link-text"></div></div></div>
         </div>
     </div>
 
@@ -346,46 +295,35 @@
         const API_URL = '/api';
         let currentWorkspaces = [];
         let expandedGroups = new Set(); 
+        let pollingInterval = null;
+        let lastDashboardHash = "";
+        
+        let logPollingInterval = null; 
+        let currentMonServerId = null;
+        let currentMonJob = 'varlogs';
 
         const esc = str => str.replace(/'/g, "\\'").replace(/"/g, "&quot;");
         function stopProp(e) { if(e) e.stopPropagation(); }
 
-        // УТИЛИТЫ
-        function showInfo(title, msg) {
-            document.getElementById('info-title').innerText = title;
-            document.getElementById('info-msg').innerText = msg;
-            openModal('info-modal');
-        }
-        function showConfirm(msg, actionFn) {
-            document.getElementById('confirm-msg').innerText = msg;
-            document.getElementById('confirm-action-btn').onclick = () => { actionFn(); closeModal('confirm-modal'); };
-            openModal('confirm-modal');
-        }
+        function showInfo(title, msg) { document.getElementById('info-title').innerText = title; document.getElementById('info-msg').innerText = msg; openModal('info-modal'); }
+        function showConfirm(msg, actionFn) { document.getElementById('confirm-msg').innerText = msg; document.getElementById('confirm-action-btn').onclick = () => { actionFn(); closeModal('confirm-modal'); }; openModal('confirm-modal'); }
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { 
             document.getElementById(id).classList.remove('active'); 
-            if(id !== 'info-modal' && id !== 'confirm-modal') loadDashboard();
+            if(id === 'monitoring-modal') {
+                if(logPollingInterval) clearInterval(logPollingInterval);
+            } else if (id !== 'info-modal' && id !== 'confirm-modal') {
+                loadDashboard(false); 
+            }
         }
-        function setBtnLoading(btnId, isLoading) {
-            const btn = document.getElementById(btnId);
-            if (isLoading) btn.classList.add('btn-loading'); else btn.classList.remove('btn-loading');
-        }
-        function copyText(elementId, successMsg) {
-            const text = document.getElementById(elementId).innerText;
-            navigator.clipboard.writeText(text).then(() => showInfo("Успех", successMsg)).catch(() => {
-                const temp = document.createElement("textarea"); temp.value = text;
-                document.body.appendChild(temp); temp.select(); document.execCommand("copy"); temp.remove();
-                showInfo("Успех", successMsg);
-            });
-        }
+        function setBtnLoading(btnId, isLoading) { const btn = document.getElementById(btnId); if (isLoading) btn.classList.add('btn-loading'); else btn.classList.remove('btn-loading'); }
+        function copyText(id, msg) { navigator.clipboard.writeText(document.getElementById(id).innerText).then(()=>showInfo("Успех", msg)).catch(()=>showInfo("Ошибка", "Скопируйте вручную")); }
 
-        // AUTH
         function switchAuthTab(tab) {
-            const isLogin = tab === 'login';
-            document.getElementById('form-login').classList.toggle('hidden', !isLogin);
-            document.getElementById('form-register').classList.toggle('hidden', isLogin);
-            document.getElementById('tab-login').className = isLogin ? 'flex-1 py-2 text-sm font-semibold rounded-lg bg-white text-blue-600 shadow transition-all' : 'flex-1 py-2 text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-900 transition-all';
-            document.getElementById('tab-register').className = !isLogin ? 'flex-1 py-2 text-sm font-semibold rounded-lg bg-white text-emerald-600 shadow transition-all' : 'flex-1 py-2 text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-900 transition-all';
+            const isL = tab === 'login';
+            document.getElementById('form-login').classList.toggle('hidden', !isL); document.getElementById('form-register').classList.toggle('hidden', isL);
+            document.getElementById('tab-login').className = isL ? 'flex-1 py-2 text-sm font-semibold rounded-lg bg-white text-blue-600 shadow transition-all' : 'flex-1 py-2 text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-900 transition-all';
+            document.getElementById('tab-register').className = !isL ? 'flex-1 py-2 text-sm font-semibold rounded-lg bg-white text-emerald-600 shadow transition-all' : 'flex-1 py-2 text-sm font-semibold rounded-lg text-slate-500 hover:text-slate-900 transition-all';
         }
 
         async function login() {
@@ -396,60 +334,41 @@
                 const res = await fetch(`${API_URL}/login`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email: e, password: p}) });
                 setBtnLoading('btn-login', false);
                 if (res.ok) { saveAuth(await res.json()); } else { showInfo('Ошибка', (await res.json()).detail || "Неверная почта или пароль"); }
-            } catch (err) {
-                setBtnLoading('btn-login', false);
-                showInfo('Сетевая ошибка', 'Не удалось подключиться к серверу.');
-            }
+            } catch (err) { setBtnLoading('btn-login', false); showInfo('Сетевая ошибка', 'Не удалось подключиться к серверу.'); }
         }
 
         async function register() {
             try {
                 const u = document.getElementById('reg-username').value.trim(), e = document.getElementById('reg-email').value, p = document.getElementById('reg-password').value;
                 if(!u || !e || !p) return showInfo('Ошибка', "Заполните все поля");
-                if(!/^[a-zA-Z0-9_]{3,30}$/.test(u.replace('@',''))) return showInfo('Ошибка', "Никнейм должен быть от 3 до 30 символов, только a-z, 0-9 и _");
                 setBtnLoading('btn-register', true);
                 const res = await fetch(`${API_URL}/users`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({username: u.replace('@',''), email: e, password: p}) });
                 setBtnLoading('btn-register', false);
-                if (res.ok) {
-                    document.getElementById('login-email').value = e; document.getElementById('login-password').value = p;
-                    showInfo('Успех', 'Аккаунт создан! Входим...'); setTimeout(login, 1500);
-                } else showInfo('Ошибка', (await res.json()).detail || "Произошла ошибка");
-            } catch (err) {
-                setBtnLoading('btn-register', false);
-                showInfo('Сетевая ошибка', 'Не удалось отправить запрос.');
-            }
+                if (res.ok) { document.getElementById('login-email').value = e; document.getElementById('login-password').value = p; showInfo('Успех', 'Аккаунт создан! Входим...'); setTimeout(login, 1500); } else showInfo('Ошибка', (await res.json()).detail || "Произошла ошибка");
+            } catch (err) { setBtnLoading('btn-register', false); showInfo('Сетевая ошибка', 'Сбой сети.'); }
         }
 
-        function saveAuth(data) {
-            localStorage.setItem('token', data.token); localStorage.setItem('role', data.role); localStorage.setItem('username', data.username);
-            checkAuth();
-        }
-        function logout() { localStorage.clear(); expandedGroups.clear(); checkAuth(); }
+        function saveAuth(data) { localStorage.setItem('token', data.token); localStorage.setItem('role', data.role); localStorage.setItem('username', data.username); checkAuth(); }
+        function logout() { localStorage.clear(); expandedGroups.clear(); if(pollingInterval) clearInterval(pollingInterval); checkAuth(); }
         function getHeaders() { return { 'Authorization': `Bearer ${localStorage.getItem('token')}`, 'Content-Type': 'application/json' }; }
 
         async function checkAuth() {
-            const token = localStorage.getItem('token');
-            if (token && token !== "undefined") {
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('app-screen').classList.remove('hidden');
+            if (localStorage.getItem('token')) {
+                document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('app-screen').classList.remove('hidden');
                 document.getElementById('user-greeting').innerText = `@${localStorage.getItem('username')}`;
                 document.getElementById('global-admin-panel').classList.toggle('hidden', localStorage.getItem('role') !== 'global_admin');
-                loadDashboard();
+                loadDashboard(false);
+                if(!pollingInterval) pollingInterval = setInterval(() => loadDashboard(true), 5000);
             } else {
-                document.getElementById('auth-screen').classList.remove('hidden');
-                document.getElementById('app-screen').classList.add('hidden');
+                document.getElementById('auth-screen').classList.remove('hidden'); document.getElementById('app-screen').classList.add('hidden');
+                if(pollingInterval) { clearInterval(pollingInterval); pollingInterval = null; }
             }
         }
 
-        // DASHBOARD
         function toggleAccordion(id) {
-            const body = document.getElementById(`ws-body-${id}`);
-            const chevron = document.getElementById(`ws-chevron-${id}`);
-            if (body.classList.contains('expanded')) {
-                body.classList.remove('expanded'); chevron.classList.remove('expanded'); expandedGroups.delete(id);
-            } else {
-                body.classList.add('expanded'); chevron.classList.add('expanded'); expandedGroups.add(id);
-            }
+            const body = document.getElementById(`ws-body-${id}`), chevron = document.getElementById(`ws-chevron-${id}`);
+            if (body.classList.contains('expanded')) { body.classList.remove('expanded'); chevron.classList.remove('expanded'); expandedGroups.delete(id); } 
+            else { body.classList.add('expanded'); chevron.classList.add('expanded'); expandedGroups.add(id); }
         }
 
         const iconLog = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>`;
@@ -459,12 +378,18 @@
         const iconTrash = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>`;
         const iconLeave = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>`;
 
-        async function loadDashboard() {
+        async function loadDashboard(isSilentMode) {
             try {
                 const res = await fetch(`${API_URL}/dashboard`, { headers: getHeaders() });
                 if (res.status === 401) { logout(); return; }
                 
-                currentWorkspaces = await res.json();
+                const data = await res.json();
+                const newHash = JSON.stringify(data);
+                if (isSilentMode && newHash === lastDashboardHash) return;
+                
+                lastDashboardHash = newHash;
+                currentWorkspaces = data;
+                
                 const listContainer = document.getElementById('dashboard-list');
                 listContainer.innerHTML = '';
                 
@@ -498,15 +423,12 @@
                                 let dotClass = s.status === 'active' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-slate-400';
                                 return `
                                 <tr class="hover:bg-slate-50 transition-colors">
-                                    <td class="px-6 py-4 font-bold text-slate-800 flex items-center gap-3">
-                                        <div class="w-2 h-2 rounded-full ${dotClass}"></div>
-                                        ${s.hostname}
-                                    </td>
+                                    <td class="px-6 py-4 font-bold text-slate-800 flex items-center gap-3"><div class="w-2 h-2 rounded-full ${dotClass}"></div>${s.hostname}</td>
                                     <td class="px-6 py-4 font-mono text-slate-500">${s.ip_address}</td>
                                     <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-md text-xs font-bold border ${badgeClass}">${s.status.toUpperCase()}</span></td>
                                     <td class="px-6 py-4 text-right">
                                         <div class="flex items-center justify-end gap-1.5" onclick="stopProp(event)">
-                                            <button onclick="viewMonitoring('${esc(s.hostname)}')" class="flex items-center gap-1.5 btn-neon-blue px-3 py-1.5 rounded-lg text-xs font-bold" title="Метрики и Логи">${iconLog} Логи</button>
+                                            <button onclick="viewMonitoring(${s.id}, '${esc(s.hostname)}', '${s.ip_address}')" class="flex items-center gap-1.5 btn-neon-blue px-3 py-1.5 rounded-lg text-xs font-bold" title="Метрики и Логи">${iconLog} Логи</button>
                                             <button onclick="showAgentCommand('${s.agent_token}')" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all" title="Команда агента">${iconAgent} Агент</button>
                                             <div class="w-px h-4 bg-slate-200 mx-1"></div>
                                             <button onclick="openMoveModal(${s.id}, ${ws.id})" class="p-1.5 btn-neon-amber rounded-lg" title="Переместить">${iconMove}</button>
@@ -527,161 +449,96 @@
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
                                 <div>
-                                    <div class="flex items-center gap-3">
-                                        <h3 class="text-xl font-bold text-slate-800 tracking-tight">${ws.name}</h3>
-                                        <div class="flex">${groupControls}</div>
-                                    </div>
+                                    <div class="flex items-center gap-3"><h3 class="text-xl font-bold text-slate-800 tracking-tight">${ws.name}</h3><div class="flex">${groupControls}</div></div>
                                     <div class="mt-2 flex flex-wrap gap-2">${membersHtml}</div>
                                 </div>
                             </div>
                             <div class="flex items-center gap-3 w-full md:w-auto" onclick="stopProp(event)">
-                                ${ws.is_owner ? `<button onclick="openInviteModal(${ws.id})" class="flex-1 md:flex-none btn-neon-green px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg> Добавить юзера</button>` : ''}
-                                <button onclick="openAddServerModal(${ws.id})" class="flex-1 md:flex-none btn-neon-blue px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg> Добавить сервер</button>
+                                ${ws.is_owner ? `<button onclick="stopProp(event); openInviteModal(${ws.id})" class="flex-1 md:flex-none btn-neon-green px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg> Добавить юзера</button>` : ''}
+                                <button onclick="stopProp(event); openAddServerModal(${ws.id})" class="flex-1 md:flex-none btn-neon-blue px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg> Добавить сервер</button>
                             </div>
                         </div>
-                        
-                        <div id="ws-body-${ws.id}" class="accordion-content bg-slate-50 border-t border-slate-200 ${bodyClass}">
-                            ${serversHtml}
-                        </div>
+                        <div id="ws-body-${ws.id}" class="accordion-content bg-slate-50 border-t border-slate-200 ${bodyClass}">${serversHtml}</div>
                     </div>`;
                 });
-            } catch (err) {
-                console.error("Ошибка загрузки дашборда", err);
+            } catch (err) { console.error(err); }
+        }
+
+        async function createGroup() { const name = document.getElementById('new-group-name').value; if(!name) return; setBtnLoading('btn-create-group', true); const res = await fetch(`${API_URL}/workspaces`, { method: 'POST', headers: getHeaders(), body: JSON.stringify({name}) }); setBtnLoading('btn-create-group', false); if(res.ok) closeModal('create-group-modal'); else showInfo('Ошибка', 'Сбой'); }
+        function openRenameModal(id, currentName) { document.getElementById('rename-ws-id').value = id; document.getElementById('rename-group-name').value = currentName; openModal('rename-group-modal'); }
+        async function renameGroup() { const id = document.getElementById('rename-ws-id').value, name = document.getElementById('rename-group-name').value; if(!name) return; setBtnLoading('btn-rename-group', true); const res = await fetch(`${API_URL}/workspaces/${id}`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify({name}) }); setBtnLoading('btn-rename-group', false); if(res.ok) closeModal('rename-group-modal'); else showInfo('Ошибка', (await res.json()).detail); }
+        function deleteWorkspace(id, name) { showConfirm(`Группа "${name}" и серверы будут удалены. Продолжить?`, async () => { const res = await fetch(`${API_URL}/workspaces/${id}`, { method: 'DELETE', headers: getHeaders() }); if(res.ok) loadDashboard(false); else showInfo("Ошибка", (await res.json()).detail); }); }
+        function leaveWorkspace(id, name) { showConfirm(`Покинуть группу "${name}"?`, async () => { const res = await fetch(`${API_URL}/workspaces/${id}/leave`, { method: 'DELETE', headers: getHeaders() }); if(res.ok) loadDashboard(false); else showInfo("Ошибка", (await res.json()).detail); }); }
+        
+        function openInviteModal(wsId) { document.getElementById('invite-workspace-id').value = wsId; document.getElementById('invite-username').value = ''; document.getElementById('invite-link-container').classList.add('hidden'); openModal('invite-modal'); }
+        async function inviteColleague() { const u = document.getElementById('invite-username').value, wsId = document.getElementById('invite-workspace-id').value; if(!u) return; setBtnLoading('btn-invite', true); const res = await fetch(`${API_URL}/team/invite`, { method: 'POST', headers: getHeaders(), body: JSON.stringify({username: u, workspace_id: parseInt(wsId)}) }); setBtnLoading('btn-invite', false); if (res.ok) { document.getElementById('invite-username').value = ''; document.getElementById('invite-link-text').innerText = (await res.json()).invite_link; document.getElementById('invite-link-container').classList.remove('hidden'); loadDashboard(false); } else showInfo('Ошибка', (await res.json()).detail); }
+
+        function openAddServerModal(wsId) { document.getElementById('server-workspace-id').value = wsId; document.getElementById('new-host').value = ''; document.getElementById('new-ip').value = ''; document.getElementById('server-modal-step-1').classList.remove('hidden'); document.getElementById('server-modal-step-2').classList.add('hidden'); openModal('server-modal'); }
+        async function createServer() { const data = { hostname: document.getElementById('new-host').value, ip_address: document.getElementById('new-ip').value, workspace_id: parseInt(document.getElementById('server-workspace-id').value) }; if(!data.hostname || !data.ip_address) return showInfo("Внимание", "Заполните поля!"); setBtnLoading('btn-create-server', true); const res = await fetch(`${API_URL}/servers`, { method: 'POST', headers: getHeaders(), body: JSON.stringify(data) }); setBtnLoading('btn-create-server', false); if (res.ok) showAgentCommand((await res.json()).agent_token); else showInfo("Ошибка", (await res.json()).detail); }
+        function showAgentCommand(token) { document.getElementById('server-modal-step-1').classList.add('hidden'); document.getElementById('server-modal-step-2').classList.remove('hidden'); document.getElementById('install-command').innerText = `curl -sL https://inv.e-laba52.ru/agent.sh | sudo bash -s -- --token=${token}`; openModal('server-modal'); }
+        function openRenameServerModal(id, currentHost) { document.getElementById('rename-server-id').value = id; document.getElementById('rename-server-name').value = currentHost; openModal('rename-server-modal'); }
+        async function renameServer() { const id = document.getElementById('rename-server-id').value, name = document.getElementById('rename-server-name').value; if(!name) return; setBtnLoading('btn-rename-server', true); const res = await fetch(`${API_URL}/servers/${id}/rename`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify({hostname: name}) }); setBtnLoading('btn-rename-server', false); if(res.ok) closeModal('rename-server-modal'); else showInfo('Ошибка', (await res.json()).detail); }
+        function openMoveModal(serverId, currentWsId) { const select = document.getElementById('move-target-ws'); select.innerHTML = currentWorkspaces.filter(ws => ws.id !== currentWsId).map(ws => `<option value="${ws.id}">${ws.name}</option>`).join(''); if(select.innerHTML === '') return showInfo("Недоступно", "Нет доступных групп для переноса."); document.getElementById('move-server-id').value = serverId; openModal('move-server-modal'); }
+        async function moveServer() { const serverId = document.getElementById('move-server-id').value, targetWsId = document.getElementById('move-target-ws').value; setBtnLoading('btn-move-server', true); const res = await fetch(`${API_URL}/servers/${serverId}/move`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify({target_workspace_id: parseInt(targetWsId)}) }); setBtnLoading('btn-move-server', false); if(res.ok) closeModal('move-server-modal'); else showInfo("Ошибка", (await res.json()).detail); }
+        function deleteServer(id, hostname) { showConfirm(`Удалить сервер ${hostname}?`, async () => { const res = await fetch(`${API_URL}/servers/${id}`, { method: 'DELETE', headers: getHeaders() }); if(res.ok) loadDashboard(false); else showInfo("Ошибка", "Сбой удаления."); }); }
+
+        // --- МОНИТОРИНГ И ЛОГИ ---
+        function viewMonitoring(id, hostname, ip) {
+            currentMonServerId = id;
+            document.getElementById('mon-hostname').innerText = hostname;
+            document.getElementById('mon-ip').innerText = ip;
+            switchMonTab('syslog');
+            openModal('monitoring-modal');
+        }
+
+        function switchMonTab(tabName) {
+            currentMonJob = tabName;
+            ['metrics', 'syslog', 'docker'].forEach(t => {
+                document.getElementById(`tab-mon-${t}`).className = `px-4 py-2 rounded-lg text-sm font-semibold border transition-colors flex items-center gap-2 ${t === tabName ? 'tab-active' : 'tab-inactive'}`;
+                document.getElementById(`content-mon-${t}`).classList.toggle('hidden', t !== tabName);
+            });
+            
+            if(logPollingInterval) clearInterval(logPollingInterval);
+            
+            if (tabName === 'syslog' || tabName === 'docker') {
+                const actualJob = tabName === 'syslog' ? 'varlogs' : 'docker';
+                fetchLogs(actualJob);
+                logPollingInterval = setInterval(() => fetchLogs(actualJob), 3000);
             }
         }
 
-        // --- GROUP ACTIONS ---
-        async function createGroup() {
-            const name = document.getElementById('new-group-name').value;
-            if(!name) return;
-            setBtnLoading('btn-create-group', true);
-            const res = await fetch(`${API_URL}/workspaces`, { method: 'POST', headers: getHeaders(), body: JSON.stringify({name}) });
-            setBtnLoading('btn-create-group', false);
-            if(res.ok) closeModal('create-group-modal'); else showInfo('Ошибка', 'Сбой создания');
-        }
-
-        function openRenameModal(id, currentName) {
-            document.getElementById('rename-ws-id').value = id;
-            document.getElementById('rename-group-name').value = currentName;
-            openModal('rename-group-modal');
-        }
-
-        async function renameGroup() {
-            const id = document.getElementById('rename-ws-id').value, name = document.getElementById('rename-group-name').value;
-            if(!name) return;
-            setBtnLoading('btn-rename-group', true);
-            const res = await fetch(`${API_URL}/workspaces/${id}`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify({name}) });
-            setBtnLoading('btn-rename-group', false);
-            if(res.ok) closeModal('rename-group-modal'); else showInfo('Ошибка', (await res.json()).detail);
-        }
-
-        function deleteWorkspace(id, name) {
-            showConfirm(`Группа "${name}" и все её серверы будут удалены безвозвратно. Продолжить?`, async () => {
-                const res = await fetch(`${API_URL}/workspaces/${id}`, { method: 'DELETE', headers: getHeaders() });
-                if(res.ok) loadDashboard(); else showInfo("Ошибка", (await res.json()).detail);
-            });
-        }
-
-        function leaveWorkspace(id, name) {
-            showConfirm(`Вы действительно хотите покинуть группу "${name}"?`, async () => {
-                const res = await fetch(`${API_URL}/workspaces/${id}/leave`, { method: 'DELETE', headers: getHeaders() });
-                if(res.ok) loadDashboard(); else showInfo("Ошибка", (await res.json()).detail);
-            });
-        }
-
-        // --- INVITES ---
-        function openInviteModal(wsId) {
-            document.getElementById('invite-workspace-id').value = wsId;
-            document.getElementById('invite-username').value = '';
-            document.getElementById('invite-link-container').classList.add('hidden');
-            openModal('invite-modal');
-        }
-
-        async function inviteColleague() {
-            const u = document.getElementById('invite-username').value, wsId = document.getElementById('invite-workspace-id').value;
-            if(!u) return;
-            setBtnLoading('btn-invite', true);
-            const res = await fetch(`${API_URL}/team/invite`, { method: 'POST', headers: getHeaders(), body: JSON.stringify({username: u, workspace_id: parseInt(wsId)}) });
-            setBtnLoading('btn-invite', false);
-            const data = await res.json();
-            if (res.ok) {
-                document.getElementById('invite-username').value = '';
-                document.getElementById('invite-link-text').innerText = data.invite_link;
-                document.getElementById('invite-link-container').classList.remove('hidden');
-                loadDashboard();
-            } else showInfo('Ошибка', data.detail);
-        }
-
-        // --- SERVERS ---
-        function openAddServerModal(wsId) {
-            document.getElementById('server-workspace-id').value = wsId;
-            document.getElementById('new-host').value = ''; document.getElementById('new-ip').value = '';
-            document.getElementById('server-modal-step-1').classList.remove('hidden');
-            document.getElementById('server-modal-step-2').classList.add('hidden');
-            openModal('server-modal');
-        }
-
-        async function createServer() {
-            const data = { hostname: document.getElementById('new-host').value, ip_address: document.getElementById('new-ip').value, workspace_id: parseInt(document.getElementById('server-workspace-id').value) };
-            if(!data.hostname || !data.ip_address) return showInfo("Внимание", "Заполните все поля!");
-            setBtnLoading('btn-create-server', true);
-            const res = await fetch(`${API_URL}/servers`, { method: 'POST', headers: getHeaders(), body: JSON.stringify(data) });
-            setBtnLoading('btn-create-server', false);
-            if (res.ok) showAgentCommand((await res.json()).agent_token); else showInfo("Ошибка", (await res.json()).detail);
-        }
-
-        function showAgentCommand(token) {
-            document.getElementById('server-modal-step-1').classList.add('hidden');
-            document.getElementById('server-modal-step-2').classList.remove('hidden');
-            document.getElementById('install-command').innerText = `curl -sL https://inv.e-laba52.ru/agent.sh | sudo bash -s -- --token=${token}`;
-            openModal('server-modal');
-        }
-
-        function openRenameServerModal(id, currentHost) {
-            document.getElementById('rename-server-id').value = id;
-            document.getElementById('rename-server-name').value = currentHost;
-            openModal('rename-server-modal');
-        }
-
-        async function renameServer() {
-            const id = document.getElementById('rename-server-id').value, name = document.getElementById('rename-server-name').value;
-            if(!name) return;
-            setBtnLoading('btn-rename-server', true);
-            const res = await fetch(`${API_URL}/servers/${id}/rename`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify({hostname: name}) });
-            setBtnLoading('btn-rename-server', false);
-            if(res.ok) closeModal('rename-server-modal'); else showInfo('Ошибка', (await res.json()).detail);
-        }
-
-        function openMoveModal(serverId, currentWsId) {
-            const select = document.getElementById('move-target-ws');
-            select.innerHTML = currentWorkspaces.filter(ws => ws.id !== currentWsId).map(ws => `<option value="${ws.id}">${ws.name}</option>`).join('');
-            if(select.innerHTML === '') return showInfo("Перемещение недоступно", "Вы состоите только в одной рабочей области.");
-            document.getElementById('move-server-id').value = serverId;
-            openModal('move-server-modal');
-        }
-
-        async function moveServer() {
-            const serverId = document.getElementById('move-server-id').value, targetWsId = document.getElementById('move-target-ws').value;
-            setBtnLoading('btn-move-server', true);
-            const res = await fetch(`${API_URL}/servers/${serverId}/move`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify({target_workspace_id: parseInt(targetWsId)}) });
-            setBtnLoading('btn-move-server', false);
-            if(res.ok) closeModal('move-server-modal'); else showInfo("Ошибка", (await res.json()).detail);
-        }
-
-        function viewMonitoring(hostname) { showInfo(`Метрики: ${hostname}`, "Данные собираются! Grafana — наш следующий шаг."); }
-
-        function deleteServer(id, hostname) {
-            showConfirm(`Удалить сервер ${hostname}? Агент перестанет присылать логи.`, async () => {
-                const res = await fetch(`${API_URL}/servers/${id}`, { method: 'DELETE', headers: getHeaders() });
-                if(res.ok) loadDashboard(); else showInfo("Ошибка", "Сбой удаления.");
-            });
-        }
-
-        function exportData() {
-            fetch('/api/export', { headers: getHeaders() }).then(r => r.blob()).then(b => {
-                const u = window.URL.createObjectURL(b); const a = document.createElement('a');
-                a.href = u; a.download = "backup.json"; document.body.appendChild(a); a.click(); a.remove();
-            });
+        async function fetchLogs(jobName) {
+            if(!currentMonServerId) return;
+            const containerId = jobName === 'docker' ? 'docker-feed' : 'syslog-feed';
+            const container = document.getElementById(containerId);
+            
+            try {
+                const res = await fetch(`${API_URL}/servers/${currentMonServerId}/logs?job=${jobName}`, { headers: getHeaders() });
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                
+                if (data.status === 'ok' && data.logs && data.logs.length > 0) {
+                    let html = '';
+                    data.logs.forEach(log => {
+                        const date = new Date(parseInt(log.ts) / 1000000).toLocaleString();
+                        html += `<div class="log-line"><span class="text-slate-500">[${date}]</span> <span class="text-slate-300">${esc(log.line)}</span></div>`;
+                    });
+                    
+                    // Автоскролл вниз, только если мы уже были внизу
+                    const parent = container.parentElement;
+                    const isAtBottom = parent.scrollHeight - parent.scrollTop <= parent.clientHeight + 50;
+                    
+                    container.innerHTML = html;
+                    
+                    if (isAtBottom) parent.scrollTop = parent.scrollHeight;
+                } else if (data.status === 'ok') {
+                    container.innerHTML = `<div class="text-slate-500 italic py-2">> Ожидание потока логов от агента...</div>`;
+                } else {
+                    container.innerHTML = `<div class="text-rose-400 py-2">> Ошибка: ${data.detail}</div>`;
+                }
+            } catch (err) {
+                // Молчим при ошибке опроса
+            }
         }
 
         if (!localStorage.getItem('token') || localStorage.getItem('token') === "undefined") logout(); else checkAuth();
