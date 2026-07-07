@@ -31,7 +31,6 @@
             background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(226, 232, 240, 0.8); box-shadow: 0 10px 40px -10px rgba(148, 163, 184, 0.1);
         }
-        /* Убрали cursor-pointer с оверлея, так как он больше не закрывает окно по клику */
         .glass-modal-overlay {
             position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px);
             display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
@@ -328,13 +327,13 @@
         </div>
     </div>
 
-    <!-- Добавить участника (убрана кнопка Закрыть) -->
+    <!-- Добавить участника -->
     <div id="invite-modal" class="glass-modal-overlay" style="z-index: 50;">
         <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md">
             <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Добавить участника</h3><button onclick="closeModal('invite-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
             <input type="hidden" id="invite-workspace-id">
             <div class="flex gap-2 mb-2"><input type="text" id="invite-username" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:border-emerald-500" placeholder="@username"><button id="btn-invite" onclick="inviteColleague()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 rounded-xl">Найти</button></div>
-            <div id="invite-link-container" class="hidden mt-4 bg-emerald-50 p-4 rounded-xl border border-emerald-100"><p class="text-emerald-700 text-sm font-semibold mb-3">Ссылка-приглашение:</p>
+            <div id="invite-link-container" class="hidden mt-6 bg-emerald-50 p-4 rounded-xl border border-emerald-100"><p class="text-emerald-700 text-sm font-semibold mb-3">Ссылка-приглашение:</p>
                 <div class="flex gap-2"><div class="flex-1 bg-white border border-emerald-200 p-3 rounded-lg font-mono text-xs break-all select-all" id="invite-link-text"></div><button onclick="copyText('invite-link-text', 'Ссылка скопирована!')" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-semibold px-4 rounded-lg transition-colors border border-emerald-200" title="Копировать"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg></button></div>
             </div>
         </div>
@@ -490,7 +489,7 @@
         }
 
         function toggleAccordion(id, event) {
-            // Игнорируем клик, если он был по кнопке внутри заголовка
+            // Игнорируем клик, если он был по кнопке в заголовке
             if (event && event.target && event.target.closest('button')) return;
             
             const body = document.getElementById(`ws-body-${id}`), chevron = document.getElementById(`ws-chevron-${id}`);
@@ -551,16 +550,21 @@
                                 let badgeClass = s.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200';
                                 let dotClass = s.status === 'active' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-slate-400';
                                 
-                                let serverControls = ws.is_owner ? `
-                                    <button onclick="viewMonitoring(${s.id}, '${esc(s.hostname)}', '${s.ip_address}')" class="flex items-center gap-1.5 btn-neon-blue px-3 py-1.5 rounded-lg text-xs font-bold" title="Метрики и Логи">${iconLog} Логи</button>
-                                    <button onclick="showAgentCommand('${s.agent_token}')" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all" title="Команда агента">${iconAgent} Агент</button>
-                                    <div class="w-px h-4 bg-slate-200 mx-1"></div>
+                                // Логика отрисовки кнопок сервера:
+                                let serverControls = `<button onclick="viewMonitoring(${s.id}, '${esc(s.hostname)}', '${s.ip_address}')" class="flex items-center gap-1.5 btn-neon-blue px-3 py-1.5 rounded-lg text-xs font-bold" title="Метрики и Логи">${iconLog} Логи</button>`;
+                                
+                                // Агент видит ТОЛЬКО создатель сервера
+                                if (s.is_creator) {
+                                    serverControls += `\n<button onclick="showAgentCommand('${s.agent_token}')" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all" title="Команда агента">${iconAgent} Агент</button>`;
+                                }
+                                
+                                // Перемещение, переименование и удаление видит ТОЛЬКО владелец текущей группы
+                                if (ws.is_owner) {
+                                    serverControls += `\n<div class="w-px h-4 bg-slate-200 mx-1"></div>
                                     <button onclick="openMoveModal(${s.id}, ${ws.id})" class="p-1.5 btn-neon-amber rounded-lg" title="Переместить">${iconMove}</button>
                                     <button onclick="openRenameServerModal(${s.id}, '${esc(s.hostname)}')" class="p-1.5 btn-neon-blue rounded-lg" title="Изменить имя">${iconEdit}</button>
-                                    <button onclick="deleteServer(${s.id}, '${esc(s.hostname)}')" class="p-1.5 btn-neon-red rounded-lg" title="Удалить">${iconTrash}</button>
-                                ` : `
-                                    <button onclick="viewMonitoring(${s.id}, '${esc(s.hostname)}', '${s.ip_address}')" class="flex items-center gap-1.5 btn-neon-blue px-3 py-1.5 rounded-lg text-xs font-bold" title="Только просмотр логов">${iconLog} Логи</button>
-                                `;
+                                    <button onclick="deleteServer(${s.id}, '${esc(s.hostname)}')" class="p-1.5 btn-neon-red rounded-lg" title="Удалить">${iconTrash}</button>`;
+                                }
 
                                 return `
                                 <tr class="hover:bg-slate-50 transition-colors">
@@ -568,7 +572,7 @@
                                     <td class="px-6 py-4 font-mono text-slate-500">${s.ip_address}</td>
                                     <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-md text-xs font-bold border ${badgeClass}">${s.status.toUpperCase()}</span></td>
                                     <td class="px-6 py-4 text-right">
-                                        <div class="flex items-center justify-end gap-1.5">
+                                        <div class="flex items-center justify-end gap-1.5" onclick="stopProp(event)">
                                             ${serverControls}
                                         </div>
                                     </td>
@@ -579,7 +583,7 @@
                         <span class="inline-flex items-center gap-1 bg-slate-100 border border-slate-200 text-slate-600 font-medium text-xs px-2.5 py-1 rounded-full">
                             <svg class="w-3 h-3 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg>
                             ${m.username}
-                            ${ws.is_owner && m.username !== localStorage.getItem('username') ? `<button onclick="removeUser(${ws.id}, ${m.id}, '${esc(m.username)}')" class="ml-1 text-slate-400 hover:text-rose-500 rounded-full focus:outline-none" title="Удалить из группы">&times;</button>` : ''}
+                            ${ws.is_owner && m.username !== localStorage.getItem('username') ? `<button onclick="stopProp(event); removeUser(${ws.id}, ${m.id}, '${esc(m.username)}')" class="ml-1 text-slate-400 hover:text-rose-500 rounded-full focus:outline-none" title="Удалить из группы">&times;</button>` : ''}
                         </span>
                     `).join(' ');
 
@@ -595,7 +599,7 @@
                                     <div class="mt-2 flex flex-wrap gap-2">${membersHtml}</div>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-3 w-full md:w-auto">
+                            <div class="flex items-center gap-3 w-full md:w-auto" onclick="stopProp(event)">
                                 ${ws.is_owner ? `<button onclick="openInviteModal(${ws.id})" class="flex-1 md:flex-none btn-neon-green px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg> Юзер</button>` : ''}
                                 ${ws.is_owner ? `<button onclick="openAddServerModal(${ws.id})" class="flex-1 md:flex-none btn-neon-blue px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg> Сервер</button>` : ''}
                             </div>
@@ -667,6 +671,7 @@
         
         function openMoveModal(serverId, currentWsId) { 
             const select = document.getElementById('move-target-ws'); 
+            // Разрешаем перенос в любую группу, ГДЕ ЮЗЕР ПРОСТО СОСТОИТ
             select.innerHTML = currentWorkspaces.filter(ws => ws.id !== currentWsId).map(ws => `<option value="${ws.id}">${ws.name}</option>`).join(''); 
             if(select.innerHTML === '') return showInfo("Недоступно", "Вы не состоите в других группах для переноса."); 
             document.getElementById('move-server-id').value = serverId; 
