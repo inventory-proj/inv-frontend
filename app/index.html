@@ -67,7 +67,6 @@
         .chevron { transition: transform 0.3s ease; }
         .chevron.expanded { transform: rotate(180deg); }
 
-        /* Окно терминала логов */
         .terminal-bg { background-color: #0f172a; color: #38bdf8; font-family: 'JetBrains Mono', Consolas, monospace; }
         .tab-active { background-color: #3b82f6; color: white; border-color: #3b82f6; }
         .tab-inactive { background-color: #f1f5f9; color: #64748b; border-color: #e2e8f0; }
@@ -83,8 +82,9 @@
         <div class="absolute bottom-[-20%] left-[20%] w-[700px] h-[700px] bg-purple-200/40 rounded-full mix-blend-multiply filter blur-[100px] animate-blob" style="animation-delay: 4s;"></div>
     </div>
 
-    <div id="info-modal" class="glass-modal-overlay z-[100]" onclick="closeModal('info-modal')">
-        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-sm text-center" onclick="stopProp(event)">
+    <!-- ВНИМАНИЕ: Убрано закрытие по фону для всех модалок. Закрытие только по кнопкам. -->
+    <div id="info-modal" class="glass-modal-overlay">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-sm text-center">
             <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-50 mb-4">
                 <svg class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             </div>
@@ -94,8 +94,8 @@
         </div>
     </div>
 
-    <div id="confirm-modal" class="glass-modal-overlay z-[100]" onclick="closeModal('confirm-modal')">
-        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-sm text-center" onclick="stopProp(event)">
+    <div id="confirm-modal" class="glass-modal-overlay">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-sm text-center">
             <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-rose-50 mb-4">
                 <svg class="h-6 w-6 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
             </div>
@@ -155,9 +155,15 @@
         </nav>
 
         <main class="flex-1 w-full max-w-[1400px] mx-auto px-4 sm:px-6 py-8">
-            <div id="global-admin-panel" class="glass-panel border-l-4 border-l-rose-500 p-4 rounded-xl mb-8 flex justify-between items-center hidden shadow-sm">
-                <span class="font-bold text-rose-600">Панель Супер-Администратора</span>
-                <button onclick="exportData()" class="bg-rose-50 border border-rose-200 text-rose-600 px-4 py-2 rounded-lg text-sm font-semibold transition-colors">Бэкап БД</button>
+            <div id="global-admin-panel" class="glass-panel border-l-4 border-l-rose-500 p-4 rounded-xl mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center hidden shadow-sm gap-4">
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                    <span class="font-bold text-rose-600">Вам доступны права Супер-Администратора</span>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="exportData()" class="bg-white hover:bg-rose-50 border border-rose-200 text-rose-600 px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm whitespace-nowrap">Бэкап БД</button>
+                    <button onclick="showInfo('Админ-панель', 'Скоро мы добавим отдельное окно управления пользователями.')" class="bg-rose-600 hover:bg-rose-500 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors shadow-md shadow-rose-600/20 whitespace-nowrap">Перейти в Админку</button>
+                </div>
             </div>
 
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
@@ -177,9 +183,8 @@
     </div>
 
     <!-- ================= МОДАЛКА МОНИТОРИНГА (ТЕРМИНАЛ) ================= -->
-    <div id="monitoring-modal" class="glass-modal-overlay" onclick="closeModal('monitoring-modal')">
-        <div class="glass-modal-content rounded-2xl w-full max-w-5xl overflow-hidden shadow-2xl flex flex-col h-[85vh]" onclick="stopProp(event)">
-            <!-- Заголовок -->
+    <div id="monitoring-modal" class="glass-modal-overlay">
+        <div class="glass-modal-content rounded-2xl w-full max-w-5xl overflow-hidden shadow-2xl flex flex-col h-[85vh]">
             <div class="bg-slate-50 border-b border-slate-200 p-4 flex justify-between items-center shrink-0">
                 <div class="flex items-center gap-3">
                     <div class="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
@@ -191,17 +196,13 @@
                 <button onclick="closeModal('monitoring-modal')" class="text-slate-400 hover:text-slate-700 transition-colors"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
             </div>
             
-            <!-- Вкладки -->
             <div class="bg-slate-100 border-b border-slate-200 p-2 flex gap-2 shrink-0">
                 <button onclick="switchMonTab('metrics')" id="tab-mon-metrics" class="px-4 py-2 rounded-lg text-sm font-semibold border tab-active transition-colors flex items-center gap-2">📈 Метрики</button>
                 <button onclick="switchMonTab('syslog')" id="tab-mon-syslog" class="px-4 py-2 rounded-lg text-sm font-semibold border tab-inactive transition-colors flex items-center gap-2">📝 Syslog</button>
                 <button onclick="switchMonTab('docker')" id="tab-mon-docker" class="px-4 py-2 rounded-lg text-sm font-semibold border tab-inactive transition-colors flex items-center gap-2">🐳 Docker</button>
             </div>
 
-            <!-- Контент вкладок -->
             <div class="flex-1 overflow-hidden relative bg-white flex flex-col">
-                
-                <!-- Вкладка Метрик (Заглушка) -->
                 <div id="content-mon-metrics" class="p-6 h-full overflow-y-auto">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                         <div class="border border-slate-200 rounded-xl p-4 bg-slate-50"><p class="text-xs text-slate-500 uppercase font-bold tracking-wider mb-1">CPU Load</p><p class="text-2xl font-bold text-slate-800">-- %</p></div>
@@ -216,26 +217,18 @@
                     </div>
                 </div>
 
-                <!-- Вкладка Syslog -->
                 <div id="content-mon-syslog" class="hidden h-full terminal-bg flex flex-col">
                     <div class="p-4 border-b border-slate-700 flex justify-between items-center shrink-0">
                         <span class="text-slate-400 text-sm">Соединение с K8s Loki... Трансляция /var/log/syslog</span>
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs text-slate-500">Live</span>
-                            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                        </div>
+                        <div class="flex items-center gap-2"><span class="text-xs text-slate-500">Live</span><div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div></div>
                     </div>
                     <div id="syslog-feed" class="p-4 overflow-y-auto flex-1 text-sm space-y-1"></div>
                 </div>
 
-                <!-- Вкладка Docker logs -->
                 <div id="content-mon-docker" class="hidden h-full terminal-bg flex flex-col">
                     <div class="p-4 border-b border-slate-700 flex justify-between items-center shrink-0">
                         <span class="text-slate-400 text-sm">Трансляция логов Docker контейнеров</span>
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs text-slate-500">Live</span>
-                            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                        </div>
+                        <div class="flex items-center gap-2"><span class="text-xs text-slate-500">Live</span><div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div></div>
                     </div>
                     <div id="docker-feed" class="p-4 overflow-y-auto flex-1 text-sm space-y-1"></div>
                 </div>
@@ -243,50 +236,78 @@
         </div>
     </div>
 
-    <!-- ================= ПРОЧИЕ МОДАЛКИ ДЕЙСТВИЙ ================= -->
-    <div id="create-group-modal" class="glass-modal-overlay" onclick="closeModal('create-group-modal')">
-        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md" onclick="stopProp(event)">
+    <!-- ================= МОДАЛКИ ДЕЙСТВИЙ (Без закрытия по фону) ================= -->
+    <div id="create-group-modal" class="glass-modal-overlay">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md">
             <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Новая группа</h3><button onclick="closeModal('create-group-modal')" class="text-slate-400 hover:text-slate-600 transition-colors"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
-            <input type="text" id="new-group-name" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 mb-6" placeholder="Название">
-            <button id="btn-create-group" onclick="createGroup()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-all shadow-md">Создать группу</button>
+            <input type="text" id="new-group-name" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 mb-6 focus:outline-none focus:border-blue-500" placeholder="Название (например: Backend Team)">
+            <div class="flex gap-3">
+                <button onclick="closeModal('create-group-modal')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 rounded-xl transition-all border border-slate-200">Отмена</button>
+                <button id="btn-create-group" onclick="createGroup()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-all shadow-md">Создать</button>
+            </div>
         </div>
     </div>
 
-    <div id="rename-group-modal" class="glass-modal-overlay" onclick="closeModal('rename-group-modal')">
-        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md" onclick="stopProp(event)"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Переименовать группу</h3><button onclick="closeModal('rename-group-modal')" class="text-slate-400 hover:text-slate-600 transition-colors"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div><input type="hidden" id="rename-ws-id"><input type="text" id="rename-group-name" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 mb-6"><button id="btn-rename-group" onclick="renameGroup()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-all shadow-md">Сохранить</button></div>
+    <div id="rename-group-modal" class="glass-modal-overlay">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md">
+            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Переименовать группу</h3><button onclick="closeModal('rename-group-modal')" class="text-slate-400 hover:text-slate-600 transition-colors"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
+            <input type="hidden" id="rename-ws-id">
+            <input type="text" id="rename-group-name" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 mb-6 focus:outline-none focus:border-blue-500">
+            <div class="flex gap-3">
+                <button onclick="closeModal('rename-group-modal')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 rounded-xl transition-all border border-slate-200">Отмена</button>
+                <button id="btn-rename-group" onclick="renameGroup()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-all shadow-md">Сохранить</button>
+            </div>
+        </div>
     </div>
 
-    <div id="server-modal" class="glass-modal-overlay" onclick="closeModal('server-modal')">
-        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-lg" onclick="stopProp(event)">
+    <div id="server-modal" class="glass-modal-overlay">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-lg">
             <div class="flex justify-between items-center mb-6"><h3 id="server-modal-title" class="text-xl font-bold text-slate-900">Добавление сервера</h3><button onclick="closeModal('server-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
             <div id="server-modal-step-1" class="space-y-4">
                 <input type="hidden" id="server-workspace-id">
-                <input type="text" id="new-host" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900" placeholder="Название хоста (web-01)">
-                <input type="text" id="new-ip" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900" placeholder="IP Адрес">
-                <button id="btn-create-server" onclick="createServer()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl mt-4 shadow-md">Зарегистрировать</button>
+                <input type="text" id="new-host" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:border-blue-500" placeholder="Название хоста (web-01)">
+                <input type="text" id="new-ip" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:border-blue-500" placeholder="IP Адрес">
+                <div class="flex gap-3 pt-2">
+                    <button onclick="closeModal('server-modal')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 rounded-xl transition-all border border-slate-200">Отмена</button>
+                    <button id="btn-create-server" onclick="createServer()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl shadow-md">Добавить</button>
+                </div>
             </div>
             <div id="server-modal-step-2" class="hidden">
                 <p class="text-slate-600 mb-3 text-sm font-medium">Команда для <code class="bg-slate-100 text-rose-500 px-1.5 py-0.5 rounded border border-slate-200">root</code>:</p>
                 <div class="relative bg-slate-900 p-4 rounded-xl font-mono text-sm text-blue-300 break-all mb-4" id="install-command"></div>
-                <button onclick="copyText('install-command', 'Команда скопирована!')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl">Скопировать</button>
+                <div class="flex gap-3">
+                    <button onclick="closeModal('server-modal')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 rounded-xl transition-all border border-slate-200">Закрыть</button>
+                    <button onclick="copyText('install-command', 'Команда скопирована!')" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl shadow-md">Скопировать</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="rename-server-modal" class="glass-modal-overlay" onclick="closeModal('rename-server-modal')">
-        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md" onclick="stopProp(event)"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Имя сервера</h3><button onclick="closeModal('rename-server-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div><input type="hidden" id="rename-server-id"><input type="text" id="rename-server-name" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 mb-6"><button id="btn-rename-server" onclick="renameServer()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl shadow-md">Сохранить</button></div>
+    <div id="rename-server-modal" class="glass-modal-overlay">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Имя сервера</h3><button onclick="closeModal('rename-server-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div><input type="hidden" id="rename-server-id"><input type="text" id="rename-server-name" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 mb-6 focus:outline-none focus:border-blue-500">
+            <div class="flex gap-3">
+                <button onclick="closeModal('rename-server-modal')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 rounded-xl transition-all border border-slate-200">Отмена</button>
+                <button id="btn-rename-server" onclick="renameServer()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl shadow-md">Сохранить</button>
+            </div>
+        </div>
     </div>
 
-    <div id="move-server-modal" class="glass-modal-overlay" onclick="closeModal('move-server-modal')">
-        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md" onclick="stopProp(event)"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Перенос сервера</h3><button onclick="closeModal('move-server-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div><input type="hidden" id="move-server-id"><select id="move-target-ws" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 mb-6"></select><button id="btn-move-server" onclick="moveServer()" class="w-full bg-amber-500 hover:bg-amber-400 text-white font-bold py-3 rounded-xl shadow-md">Перенести</button></div>
+    <div id="move-server-modal" class="glass-modal-overlay">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Перенос сервера</h3><button onclick="closeModal('move-server-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div><input type="hidden" id="move-server-id"><select id="move-target-ws" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 mb-6 focus:outline-none focus:border-amber-500"></select>
+            <div class="flex gap-3">
+                <button onclick="closeModal('move-server-modal')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 rounded-xl transition-all border border-slate-200">Отмена</button>
+                <button id="btn-move-server" onclick="moveServer()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-white font-bold py-3 rounded-xl shadow-md">Перенести</button>
+            </div>
+        </div>
     </div>
 
-    <div id="invite-modal" class="glass-modal-overlay" onclick="closeModal('invite-modal')">
-        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md" onclick="stopProp(event)">
-            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Добавить коллегу</h3><button onclick="closeModal('invite-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
+    <div id="invite-modal" class="glass-modal-overlay">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md">
+            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Добавить участника</h3><button onclick="closeModal('invite-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
             <input type="hidden" id="invite-workspace-id">
-            <div class="flex gap-2 mb-2"><input type="text" id="invite-username" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900" placeholder="@username"><button id="btn-invite" onclick="inviteColleague()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 rounded-xl">Найти</button></div>
+            <div class="flex gap-2 mb-2"><input type="text" id="invite-username" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:border-emerald-500" placeholder="@username"><button id="btn-invite" onclick="inviteColleague()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 rounded-xl">Найти</button></div>
             <div id="invite-link-container" class="hidden mt-6 bg-emerald-50 p-4 rounded-xl border border-emerald-100"><p class="text-emerald-700 text-sm font-semibold mb-3">Ссылка-приглашение:</p><div class="flex gap-2"><div class="flex-1 bg-white border border-emerald-200 p-3 rounded-lg font-mono text-xs break-all select-all" id="invite-link-text"></div></div></div>
+            <div class="mt-4"><button onclick="closeModal('invite-modal')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 rounded-xl transition-all border border-slate-200">Закрыть</button></div>
         </div>
     </div>
 
@@ -297,7 +318,6 @@
         let expandedGroups = new Set(); 
         let pollingInterval = null;
         let lastDashboardHash = "";
-        
         let logPollingInterval = null; 
         let currentMonServerId = null;
         let currentMonJob = 'varlogs';
@@ -421,6 +441,19 @@
                             <tbody class="divide-y divide-slate-100">` + ws.servers.map(s => {
                                 let badgeClass = s.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200';
                                 let dotClass = s.status === 'active' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-slate-400';
+                                
+                                // ВАЖНО: Разделение кнопок
+                                let serverControls = ws.is_owner ? `
+                                    <button onclick="viewMonitoring(${s.id}, '${esc(s.hostname)}', '${s.ip_address}')" class="flex items-center gap-1.5 btn-neon-blue px-3 py-1.5 rounded-lg text-xs font-bold" title="Метрики и Логи">${iconLog} Логи</button>
+                                    <button onclick="showAgentCommand('${s.agent_token}')" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all" title="Команда агента">${iconAgent} Агент</button>
+                                    <div class="w-px h-4 bg-slate-200 mx-1"></div>
+                                    <button onclick="openMoveModal(${s.id}, ${ws.id})" class="p-1.5 btn-neon-amber rounded-lg" title="Переместить">${iconMove}</button>
+                                    <button onclick="openRenameServerModal(${s.id}, '${esc(s.hostname)}')" class="p-1.5 btn-neon-blue rounded-lg" title="Изменить имя">${iconEdit}</button>
+                                    <button onclick="deleteServer(${s.id}, '${esc(s.hostname)}')" class="p-1.5 btn-neon-red rounded-lg" title="Удалить">${iconTrash}</button>
+                                ` : `
+                                    <button onclick="viewMonitoring(${s.id}, '${esc(s.hostname)}', '${s.ip_address}')" class="flex items-center gap-1.5 btn-neon-blue px-3 py-1.5 rounded-lg text-xs font-bold" title="Только просмотр логов">${iconLog} Логи</button>
+                                `;
+
                                 return `
                                 <tr class="hover:bg-slate-50 transition-colors">
                                     <td class="px-6 py-4 font-bold text-slate-800 flex items-center gap-3"><div class="w-2 h-2 rounded-full ${dotClass}"></div>${s.hostname}</td>
@@ -428,18 +461,19 @@
                                     <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-md text-xs font-bold border ${badgeClass}">${s.status.toUpperCase()}</span></td>
                                     <td class="px-6 py-4 text-right">
                                         <div class="flex items-center justify-end gap-1.5" onclick="stopProp(event)">
-                                            <button onclick="viewMonitoring(${s.id}, '${esc(s.hostname)}', '${s.ip_address}')" class="flex items-center gap-1.5 btn-neon-blue px-3 py-1.5 rounded-lg text-xs font-bold" title="Метрики и Логи">${iconLog} Логи</button>
-                                            <button onclick="showAgentCommand('${s.agent_token}')" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all" title="Команда агента">${iconAgent} Агент</button>
-                                            <div class="w-px h-4 bg-slate-200 mx-1"></div>
-                                            <button onclick="openMoveModal(${s.id}, ${ws.id})" class="p-1.5 btn-neon-amber rounded-lg" title="Переместить">${iconMove}</button>
-                                            <button onclick="openRenameServerModal(${s.id}, '${esc(s.hostname)}')" class="p-1.5 btn-neon-blue rounded-lg" title="Изменить имя">${iconEdit}</button>
-                                            <button onclick="deleteServer(${s.id}, '${esc(s.hostname)}')" class="p-1.5 btn-neon-red rounded-lg" title="Удалить">${iconTrash}</button>
+                                            ${serverControls}
                                         </div>
                                     </td>
                                 </tr>`;
                             }).join('') + `</tbody></table></div>`;
 
-                    let membersHtml = ws.members.map(m => `<span class="inline-flex items-center gap-1 bg-slate-100 border border-slate-200 text-slate-600 font-medium text-xs px-2.5 py-1 rounded-full"><svg class="w-3 h-3 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg>${m.username}</span>`).join(' ');
+                    let membersHtml = ws.members.map(m => `
+                        <span class="inline-flex items-center gap-1 bg-slate-100 border border-slate-200 text-slate-600 font-medium text-xs px-2.5 py-1 rounded-full">
+                            <svg class="w-3 h-3 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg>
+                            ${m.username}
+                            ${ws.is_owner && m.username !== localStorage.getItem('username') ? `<button onclick="stopProp(event); removeUser(${ws.id}, ${m.id}, '${esc(m.username)}')" class="ml-1 text-slate-400 hover:text-rose-500 rounded-full focus:outline-none" title="Удалить из группы">&times;</button>` : ''}
+                        </span>
+                    `).join(' ');
 
                     listContainer.innerHTML += `
                     <div class="glass-panel rounded-2xl shadow-sm border border-slate-200 mb-2 transition-all duration-300">
@@ -454,8 +488,8 @@
                                 </div>
                             </div>
                             <div class="flex items-center gap-3 w-full md:w-auto" onclick="stopProp(event)">
-                                ${ws.is_owner ? `<button onclick="stopProp(event); openInviteModal(${ws.id})" class="flex-1 md:flex-none btn-neon-green px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg> Добавить юзера</button>` : ''}
-                                <button onclick="stopProp(event); openAddServerModal(${ws.id})" class="flex-1 md:flex-none btn-neon-blue px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg> Добавить сервер</button>
+                                ${ws.is_owner ? `<button onclick="stopProp(event); openInviteModal(${ws.id})" class="flex-1 md:flex-none btn-neon-green px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg> Юзер</button>` : ''}
+                                ${ws.is_owner ? `<button onclick="stopProp(event); openAddServerModal(${ws.id})" class="flex-1 md:flex-none btn-neon-blue px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg> Сервер</button>` : ''}
                             </div>
                         </div>
                         <div id="ws-body-${ws.id}" class="accordion-content bg-slate-50 border-t border-slate-200 ${bodyClass}">${serversHtml}</div>
@@ -470,15 +504,17 @@
         function deleteWorkspace(id, name) { showConfirm(`Группа "${name}" и серверы будут удалены. Продолжить?`, async () => { const res = await fetch(`${API_URL}/workspaces/${id}`, { method: 'DELETE', headers: getHeaders() }); if(res.ok) loadDashboard(false); else showInfo("Ошибка", (await res.json()).detail); }); }
         function leaveWorkspace(id, name) { showConfirm(`Покинуть группу "${name}"?`, async () => { const res = await fetch(`${API_URL}/workspaces/${id}/leave`, { method: 'DELETE', headers: getHeaders() }); if(res.ok) loadDashboard(false); else showInfo("Ошибка", (await res.json()).detail); }); }
         
+        function removeUser(wsId, userId, username) { showConfirm(`Удалить пользователя @${username} из группы?`, async () => { const res = await fetch(`${API_URL}/workspaces/${wsId}/members/${userId}`, { method: 'DELETE', headers: getHeaders() }); if(res.ok) loadDashboard(false); else showInfo("Ошибка", (await res.json()).detail); }); }
+
         function openInviteModal(wsId) { document.getElementById('invite-workspace-id').value = wsId; document.getElementById('invite-username').value = ''; document.getElementById('invite-link-container').classList.add('hidden'); openModal('invite-modal'); }
         async function inviteColleague() { const u = document.getElementById('invite-username').value, wsId = document.getElementById('invite-workspace-id').value; if(!u) return; setBtnLoading('btn-invite', true); const res = await fetch(`${API_URL}/team/invite`, { method: 'POST', headers: getHeaders(), body: JSON.stringify({username: u, workspace_id: parseInt(wsId)}) }); setBtnLoading('btn-invite', false); if (res.ok) { document.getElementById('invite-username').value = ''; document.getElementById('invite-link-text').innerText = (await res.json()).invite_link; document.getElementById('invite-link-container').classList.remove('hidden'); loadDashboard(false); } else showInfo('Ошибка', (await res.json()).detail); }
 
         function openAddServerModal(wsId) { document.getElementById('server-workspace-id').value = wsId; document.getElementById('new-host').value = ''; document.getElementById('new-ip').value = ''; document.getElementById('server-modal-step-1').classList.remove('hidden'); document.getElementById('server-modal-step-2').classList.add('hidden'); openModal('server-modal'); }
         async function createServer() { const data = { hostname: document.getElementById('new-host').value, ip_address: document.getElementById('new-ip').value, workspace_id: parseInt(document.getElementById('server-workspace-id').value) }; if(!data.hostname || !data.ip_address) return showInfo("Внимание", "Заполните поля!"); setBtnLoading('btn-create-server', true); const res = await fetch(`${API_URL}/servers`, { method: 'POST', headers: getHeaders(), body: JSON.stringify(data) }); setBtnLoading('btn-create-server', false); if (res.ok) showAgentCommand((await res.json()).agent_token); else showInfo("Ошибка", (await res.json()).detail); }
-        function showAgentCommand(token) { document.getElementById('server-modal-step-1').classList.add('hidden'); document.getElementById('server-modal-step-2').classList.remove('hidden'); document.getElementById('install-command').innerText = `curl -sL https://inv.e-laba52.ru/agent.sh | sudo bash -s -- --token=${token}`; openModal('server-modal'); }
+        function showAgentCommand(token) { document.getElementById('server-modal-step-1').classList.add('hidden'); document.getElementById('server-modal-step-2').classList.remove('hidden'); document.getElementById('install-command').innerText = `curl -sL https://inv.e-laba52.ru/agent.sh | sudo bash -s -- --token=${token}`; }
         function openRenameServerModal(id, currentHost) { document.getElementById('rename-server-id').value = id; document.getElementById('rename-server-name').value = currentHost; openModal('rename-server-modal'); }
         async function renameServer() { const id = document.getElementById('rename-server-id').value, name = document.getElementById('rename-server-name').value; if(!name) return; setBtnLoading('btn-rename-server', true); const res = await fetch(`${API_URL}/servers/${id}/rename`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify({hostname: name}) }); setBtnLoading('btn-rename-server', false); if(res.ok) closeModal('rename-server-modal'); else showInfo('Ошибка', (await res.json()).detail); }
-        function openMoveModal(serverId, currentWsId) { const select = document.getElementById('move-target-ws'); select.innerHTML = currentWorkspaces.filter(ws => ws.id !== currentWsId).map(ws => `<option value="${ws.id}">${ws.name}</option>`).join(''); if(select.innerHTML === '') return showInfo("Недоступно", "Нет доступных групп для переноса."); document.getElementById('move-server-id').value = serverId; openModal('move-server-modal'); }
+        function openMoveModal(serverId, currentWsId) { const select = document.getElementById('move-target-ws'); select.innerHTML = currentWorkspaces.filter(ws => ws.id !== currentWsId && ws.is_owner).map(ws => `<option value="${ws.id}">${ws.name}</option>`).join(''); if(select.innerHTML === '') return showInfo("Недоступно", "Вы не являетесь владельцем других групп для переноса."); document.getElementById('move-server-id').value = serverId; openModal('move-server-modal'); }
         async function moveServer() { const serverId = document.getElementById('move-server-id').value, targetWsId = document.getElementById('move-target-ws').value; setBtnLoading('btn-move-server', true); const res = await fetch(`${API_URL}/servers/${serverId}/move`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify({target_workspace_id: parseInt(targetWsId)}) }); setBtnLoading('btn-move-server', false); if(res.ok) closeModal('move-server-modal'); else showInfo("Ошибка", (await res.json()).detail); }
         function deleteServer(id, hostname) { showConfirm(`Удалить сервер ${hostname}?`, async () => { const res = await fetch(`${API_URL}/servers/${id}`, { method: 'DELETE', headers: getHeaders() }); if(res.ok) loadDashboard(false); else showInfo("Ошибка", "Сбой удаления."); }); }
 
@@ -524,7 +560,6 @@
                         html += `<div class="log-line"><span class="text-slate-500">[${date}]</span> <span class="text-slate-300">${esc(log.line)}</span></div>`;
                     });
                     
-                    // Автоскролл вниз, только если мы уже были внизу
                     const parent = container.parentElement;
                     const isAtBottom = parent.scrollHeight - parent.scrollTop <= parent.clientHeight + 50;
                     
@@ -540,6 +575,8 @@
                 // Молчим при ошибке опроса
             }
         }
+
+        function exportData() { fetch('/api/export', { headers: getHeaders() }).then(r => r.blob()).then(b => { const u = window.URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = "backup.json"; document.body.appendChild(a); a.click(); a.remove(); }); }
 
         if (!localStorage.getItem('token') || localStorage.getItem('token') === "undefined") logout(); else checkAuth();
     </script>
