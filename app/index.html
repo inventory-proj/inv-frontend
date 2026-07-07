@@ -32,7 +32,7 @@
             border: 1px solid rgba(226, 232, 240, 0.8); box-shadow: 0 10px 40px -10px rgba(148, 163, 184, 0.1);
         }
         .glass-modal-overlay {
-            position: fixed; inset: 0; z-index: 50; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px);
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px);
             display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
         .glass-modal-overlay.active { opacity: 1; pointer-events: auto; }
@@ -82,32 +82,6 @@
         <div class="absolute bottom-[-20%] left-[20%] w-[700px] h-[700px] bg-purple-200/40 rounded-full mix-blend-multiply filter blur-[100px] animate-blob" style="animation-delay: 4s;"></div>
     </div>
 
-    <!-- ВНИМАНИЕ: Убрано закрытие по фону для всех модалок. Закрытие только по кнопкам. -->
-    <div id="info-modal" class="glass-modal-overlay">
-        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-sm text-center">
-            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-50 mb-4">
-                <svg class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            </div>
-            <h3 id="info-title" class="text-xl font-bold text-slate-900 mb-2">Внимание</h3>
-            <p id="info-msg" class="text-slate-500 mb-6 text-sm"></p>
-            <button onclick="closeModal('info-modal')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded-xl transition-all">Понятно</button>
-        </div>
-    </div>
-
-    <div id="confirm-modal" class="glass-modal-overlay">
-        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-sm text-center">
-            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-rose-50 mb-4">
-                <svg class="h-6 w-6 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-            </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-2">Подтверждение</h3>
-            <p id="confirm-msg" class="text-slate-500 mb-6 text-sm"></p>
-            <div class="flex gap-3">
-                <button onclick="closeModal('confirm-modal')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl transition-all border border-slate-200">Отмена</button>
-                <button id="confirm-action-btn" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-semibold py-2.5 rounded-xl transition-all shadow-md shadow-rose-500/20">Продолжить</button>
-            </div>
-        </div>
-    </div>
-
     <!-- АВТОРИЗАЦИЯ -->
     <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4">
         <div class="glass-panel p-8 rounded-3xl w-full max-w-md relative overflow-hidden shadow-2xl">
@@ -135,7 +109,7 @@
         </div>
     </div>
 
-    <!-- ГЛАВНЫЙ ЭКРАН -->
+    <!-- ГЛАВНОЕ ОКНО ПРИЛОЖЕНИЯ -->
     <div id="app-screen" class="hidden min-h-screen flex flex-col">
         <nav class="glass-panel sticky top-0 z-40 border-b border-slate-200 rounded-none shadow-sm px-6 py-4">
             <div class="max-w-[1400px] mx-auto flex justify-between items-center">
@@ -154,15 +128,15 @@
             </div>
         </nav>
 
-        <main class="flex-1 w-full max-w-[1400px] mx-auto px-4 sm:px-6 py-8">
+        <!-- РЕЖИМ 1: ДАШБОРД (Для пользователя) -->
+        <main id="dashboard-view" class="flex-1 w-full max-w-[1400px] mx-auto px-4 sm:px-6 py-8">
             <div id="global-admin-panel" class="glass-panel border-l-4 border-l-rose-500 p-4 rounded-xl mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center hidden shadow-sm gap-4">
                 <div class="flex items-center gap-3">
                     <svg class="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
                     <span class="font-bold text-rose-600">Вам доступны права Супер-Администратора</span>
                 </div>
                 <div class="flex gap-3">
-                    <button onclick="exportData()" class="bg-white hover:bg-rose-50 border border-rose-200 text-rose-600 px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm whitespace-nowrap">Бэкап БД</button>
-                    <button onclick="showInfo('Админ-панель', 'Скоро мы добавим отдельное окно управления пользователями.')" class="bg-rose-600 hover:bg-rose-500 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors shadow-md shadow-rose-600/20 whitespace-nowrap">Перейти в Админку</button>
+                    <button onclick="toggleAdminMode(true)" class="bg-rose-600 hover:bg-rose-500 text-white px-5 py-2 rounded-lg text-sm font-bold transition-colors shadow-md shadow-rose-600/20 whitespace-nowrap">Перейти в Админку</button>
                 </div>
             </div>
 
@@ -180,10 +154,43 @@
                 <!-- Генерируется через JS -->
             </div>
         </main>
+
+        <!-- РЕЖИМ 2: АДМИНКА (Скрыта по умолчанию) -->
+        <main id="admin-view" class="hidden flex-1 w-full max-w-[1400px] mx-auto px-4 sm:px-6 py-8">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-800 mb-2 tracking-tight">Админ-панель</h2>
+                    <p class="text-slate-500 text-sm">Глобальное управление пользователями системы.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="exportData()" class="bg-white hover:bg-rose-50 border border-rose-200 text-rose-600 px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-sm transition-all"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg> Бэкап БД</button>
+                    <button onclick="toggleAdminMode(false)" class="btn-neon-blue px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-sm">Вернуться к Дашборду</button>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm whitespace-nowrap bg-white">
+                        <thead class="text-xs text-slate-500 uppercase bg-slate-100 border-b border-slate-200">
+                            <tr>
+                                <th class="px-6 py-4 font-bold">ID</th>
+                                <th class="px-6 py-4 font-bold">Никнейм</th>
+                                <th class="px-6 py-4 font-bold">Email</th>
+                                <th class="px-6 py-4 font-bold">Роль</th>
+                                <th class="px-6 py-4 text-right font-bold">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-users-list" class="divide-y divide-slate-100">
+                            <!-- Генерируется через JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
     </div>
 
     <!-- ================= МОДАЛКА МОНИТОРИНГА (ТЕРМИНАЛ) ================= -->
-    <div id="monitoring-modal" class="glass-modal-overlay">
+    <div id="monitoring-modal" class="glass-modal-overlay" style="z-index: 50;">
         <div class="glass-modal-content rounded-2xl w-full max-w-5xl overflow-hidden shadow-2xl flex flex-col h-[85vh]">
             <div class="bg-slate-50 border-b border-slate-200 p-4 flex justify-between items-center shrink-0">
                 <div class="flex items-center gap-3">
@@ -236,8 +243,8 @@
         </div>
     </div>
 
-    <!-- ================= МОДАЛКИ ДЕЙСТВИЙ (Без закрытия по фону) ================= -->
-    <div id="create-group-modal" class="glass-modal-overlay">
+    <!-- ================= ПРОЧИЕ МОДАЛКИ ДЕЙСТВИЙ ================= -->
+    <div id="create-group-modal" class="glass-modal-overlay" style="z-index: 50;">
         <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md">
             <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Новая группа</h3><button onclick="closeModal('create-group-modal')" class="text-slate-400 hover:text-slate-600 transition-colors"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
             <input type="text" id="new-group-name" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 mb-6 focus:outline-none focus:border-blue-500" placeholder="Название (например: Backend Team)">
@@ -248,7 +255,7 @@
         </div>
     </div>
 
-    <div id="rename-group-modal" class="glass-modal-overlay">
+    <div id="rename-group-modal" class="glass-modal-overlay" style="z-index: 50;">
         <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md">
             <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Переименовать группу</h3><button onclick="closeModal('rename-group-modal')" class="text-slate-400 hover:text-slate-600 transition-colors"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
             <input type="hidden" id="rename-ws-id">
@@ -260,7 +267,7 @@
         </div>
     </div>
 
-    <div id="server-modal" class="glass-modal-overlay">
+    <div id="server-modal" class="glass-modal-overlay" style="z-index: 50;">
         <div class="glass-modal-content p-6 rounded-2xl w-full max-w-lg">
             <div class="flex justify-between items-center mb-6"><h3 id="server-modal-title" class="text-xl font-bold text-slate-900">Добавление сервера</h3><button onclick="closeModal('server-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
             <div id="server-modal-step-1" class="space-y-4">
@@ -283,7 +290,7 @@
         </div>
     </div>
 
-    <div id="rename-server-modal" class="glass-modal-overlay">
+    <div id="rename-server-modal" class="glass-modal-overlay" style="z-index: 50;">
         <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Имя сервера</h3><button onclick="closeModal('rename-server-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div><input type="hidden" id="rename-server-id"><input type="text" id="rename-server-name" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 mb-6 focus:outline-none focus:border-blue-500">
             <div class="flex gap-3">
                 <button onclick="closeModal('rename-server-modal')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 rounded-xl transition-all border border-slate-200">Отмена</button>
@@ -292,7 +299,7 @@
         </div>
     </div>
 
-    <div id="move-server-modal" class="glass-modal-overlay">
+    <div id="move-server-modal" class="glass-modal-overlay" style="z-index: 50;">
         <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Перенос сервера</h3><button onclick="closeModal('move-server-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div><input type="hidden" id="move-server-id"><select id="move-target-ws" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 mb-6 focus:outline-none focus:border-amber-500"></select>
             <div class="flex gap-3">
                 <button onclick="closeModal('move-server-modal')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 rounded-xl transition-all border border-slate-200">Отмена</button>
@@ -301,13 +308,39 @@
         </div>
     </div>
 
-    <div id="invite-modal" class="glass-modal-overlay">
+    <div id="invite-modal" class="glass-modal-overlay" style="z-index: 50;">
         <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md">
             <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Добавить участника</h3><button onclick="closeModal('invite-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
             <input type="hidden" id="invite-workspace-id">
             <div class="flex gap-2 mb-2"><input type="text" id="invite-username" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:border-emerald-500" placeholder="@username"><button id="btn-invite" onclick="inviteColleague()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 rounded-xl">Найти</button></div>
             <div id="invite-link-container" class="hidden mt-6 bg-emerald-50 p-4 rounded-xl border border-emerald-100"><p class="text-emerald-700 text-sm font-semibold mb-3">Ссылка-приглашение:</p><div class="flex gap-2"><div class="flex-1 bg-white border border-emerald-200 p-3 rounded-lg font-mono text-xs break-all select-all" id="invite-link-text"></div></div></div>
             <div class="mt-4"><button onclick="closeModal('invite-modal')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 rounded-xl transition-all border border-slate-200">Закрыть</button></div>
+        </div>
+    </div>
+
+    <!-- ВНИМАНИЕ: Z-INDEX 9999 - Эти окна теперь всегда поверх остальных -->
+    <div id="info-modal" class="glass-modal-overlay" style="z-index: 9999;">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-sm text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-50 mb-4">
+                <svg class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </div>
+            <h3 id="info-title" class="text-xl font-bold text-slate-900 mb-2">Внимание</h3>
+            <p id="info-msg" class="text-slate-500 mb-6 text-sm"></p>
+            <button onclick="closeModal('info-modal')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded-xl transition-all shadow-md">Понятно</button>
+        </div>
+    </div>
+
+    <div id="confirm-modal" class="glass-modal-overlay" style="z-index: 9999;">
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-sm text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-rose-50 mb-4">
+                <svg class="h-6 w-6 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 mb-2">Подтверждение</h3>
+            <p id="confirm-msg" class="text-slate-500 mb-6 text-sm"></p>
+            <div class="flex gap-3">
+                <button onclick="closeModal('confirm-modal')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl transition-all border border-slate-200">Отмена</button>
+                <button id="confirm-action-btn" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-semibold py-2.5 rounded-xl transition-all shadow-md shadow-rose-500/20">Продолжить</button>
+            </div>
         </div>
     </div>
 
@@ -323,7 +356,6 @@
         let currentMonJob = 'varlogs';
 
         const esc = str => str.replace(/'/g, "\\'").replace(/"/g, "&quot;");
-        function stopProp(e) { if(e) e.stopPropagation(); }
 
         function showInfo(title, msg) { document.getElementById('info-title').innerText = title; document.getElementById('info-msg').innerText = msg; openModal('info-modal'); }
         function showConfirm(msg, actionFn) { document.getElementById('confirm-msg').innerText = msg; document.getElementById('confirm-action-btn').onclick = () => { actionFn(); closeModal('confirm-modal'); }; openModal('confirm-modal'); }
@@ -333,7 +365,9 @@
             if(id === 'monitoring-modal') {
                 if(logPollingInterval) clearInterval(logPollingInterval);
             } else if (id !== 'info-modal' && id !== 'confirm-modal') {
-                loadDashboard(false); 
+                if(document.getElementById('admin-view').classList.contains('hidden')) {
+                    loadDashboard(false); 
+                }
             }
         }
         function setBtnLoading(btnId, isLoading) { const btn = document.getElementById(btnId); if (isLoading) btn.classList.add('btn-loading'); else btn.classList.remove('btn-loading'); }
@@ -374,9 +408,15 @@
 
         async function checkAuth() {
             if (localStorage.getItem('token')) {
-                document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('app-screen').classList.remove('hidden');
+                document.getElementById('auth-screen').classList.add('hidden'); 
+                document.getElementById('app-screen').classList.remove('hidden');
+                
+                document.getElementById('dashboard-view').classList.remove('hidden');
+                document.getElementById('admin-view').classList.add('hidden');
+                
                 document.getElementById('user-greeting').innerText = `@${localStorage.getItem('username')}`;
                 document.getElementById('global-admin-panel').classList.toggle('hidden', localStorage.getItem('role') !== 'global_admin');
+                
                 loadDashboard(false);
                 if(!pollingInterval) pollingInterval = setInterval(() => loadDashboard(true), 5000);
             } else {
@@ -385,7 +425,51 @@
             }
         }
 
-        function toggleAccordion(id) {
+        function toggleAdminMode(enterAdmin) {
+            if (enterAdmin) {
+                document.getElementById('dashboard-view').classList.add('hidden');
+                document.getElementById('admin-view').classList.remove('hidden');
+                if(pollingInterval) clearInterval(pollingInterval); 
+                loadAdminData();
+            } else {
+                document.getElementById('admin-view').classList.add('hidden');
+                document.getElementById('dashboard-view').classList.remove('hidden');
+                loadDashboard(false);
+                if(!pollingInterval) pollingInterval = setInterval(() => loadDashboard(true), 5000);
+            }
+        }
+
+        async function loadAdminData() {
+            const listContainer = document.getElementById('admin-users-list');
+            listContainer.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-slate-500">Загрузка...</td></tr>';
+            try {
+                const res = await fetch(`${API_URL}/admin/users`, { headers: getHeaders() });
+                if (!res.ok) throw new Error("Нет доступа");
+                const users = await res.json();
+                
+                listContainer.innerHTML = '';
+                users.forEach(u => {
+                    let badgeClass = u.role_name === 'global_admin' ? 'bg-rose-50 text-rose-600 border-rose-200' : 'bg-slate-100 text-slate-600 border-slate-200';
+                    listContainer.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-4 font-bold text-slate-500">#${u.id}</td>
+                        <td class="px-6 py-4 font-bold text-slate-800">@${esc(u.username)}</td>
+                        <td class="px-6 py-4 text-slate-600">${esc(u.email)}</td>
+                        <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-md text-xs font-bold border ${badgeClass}">${u.role_name.toUpperCase()}</span></td>
+                        <td class="px-6 py-4 text-right">
+                            <button onclick="showInfo('Функция в разработке', 'Удаление юзеров админом появится в следующем обновлении.')" class="btn-neon-red px-3 py-1.5 rounded-lg text-xs font-bold" title="Удалить">Удалить</button>
+                        </td>
+                    </tr>`;
+                });
+            } catch (err) {
+                listContainer.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-rose-500">Ошибка загрузки. Возможно у вас нет прав Администратора.</td></tr>';
+            }
+        }
+
+        function toggleAccordion(id, event) {
+            // Предотвращаем срабатывание аккордеона, если клик был по кнопке внутри заголовка
+            if (event.target.closest('button')) return;
+            
             const body = document.getElementById(`ws-body-${id}`), chevron = document.getElementById(`ws-chevron-${id}`);
             if (body.classList.contains('expanded')) { body.classList.remove('expanded'); chevron.classList.remove('expanded'); expandedGroups.delete(id); } 
             else { body.classList.add('expanded'); chevron.classList.add('expanded'); expandedGroups.add(id); }
@@ -399,6 +483,8 @@
         const iconLeave = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>`;
 
         async function loadDashboard(isSilentMode) {
+            if(!document.getElementById('admin-view').classList.contains('hidden')) return;
+
             try {
                 const res = await fetch(`${API_URL}/dashboard`, { headers: getHeaders() });
                 if (res.status === 401) { logout(); return; }
@@ -426,10 +512,10 @@
                     const bodyClass = isOpen ? 'expanded' : '';
 
                     let groupControls = ws.is_owner ? `
-                        <button onclick="stopProp(event); openRenameModal(${ws.id}, '${esc(ws.name)}')" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Переименовать">${iconEdit}</button>
-                        <button onclick="stopProp(event); deleteWorkspace(${ws.id}, '${esc(ws.name)}')" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all" title="Удалить группу">${iconTrash}</button>
+                        <button onclick="openRenameModal(${ws.id}, '${esc(ws.name)}')" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Переименовать">${iconEdit}</button>
+                        <button onclick="deleteWorkspace(${ws.id}, '${esc(ws.name)}')" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all" title="Удалить группу">${iconTrash}</button>
                     ` : `
-                        <button onclick="stopProp(event); leaveWorkspace(${ws.id}, '${esc(ws.name)}')" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all" title="Покинуть группу">${iconLeave}</button>
+                        <button onclick="leaveWorkspace(${ws.id}, '${esc(ws.name)}')" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all" title="Покинуть группу">${iconLeave}</button>
                     `;
                     
                     let serversHtml = ws.servers.length === 0 
@@ -442,7 +528,6 @@
                                 let badgeClass = s.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200';
                                 let dotClass = s.status === 'active' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-slate-400';
                                 
-                                // ВАЖНО: Разделение кнопок
                                 let serverControls = ws.is_owner ? `
                                     <button onclick="viewMonitoring(${s.id}, '${esc(s.hostname)}', '${s.ip_address}')" class="flex items-center gap-1.5 btn-neon-blue px-3 py-1.5 rounded-lg text-xs font-bold" title="Метрики и Логи">${iconLog} Логи</button>
                                     <button onclick="showAgentCommand('${s.agent_token}')" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all" title="Команда агента">${iconAgent} Агент</button>
@@ -460,7 +545,7 @@
                                     <td class="px-6 py-4 font-mono text-slate-500">${s.ip_address}</td>
                                     <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-md text-xs font-bold border ${badgeClass}">${s.status.toUpperCase()}</span></td>
                                     <td class="px-6 py-4 text-right">
-                                        <div class="flex items-center justify-end gap-1.5" onclick="stopProp(event)">
+                                        <div class="flex items-center justify-end gap-1.5">
                                             ${serverControls}
                                         </div>
                                     </td>
@@ -471,13 +556,13 @@
                         <span class="inline-flex items-center gap-1 bg-slate-100 border border-slate-200 text-slate-600 font-medium text-xs px-2.5 py-1 rounded-full">
                             <svg class="w-3 h-3 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg>
                             ${m.username}
-                            ${ws.is_owner && m.username !== localStorage.getItem('username') ? `<button onclick="stopProp(event); removeUser(${ws.id}, ${m.id}, '${esc(m.username)}')" class="ml-1 text-slate-400 hover:text-rose-500 rounded-full focus:outline-none" title="Удалить из группы">&times;</button>` : ''}
+                            ${ws.is_owner && m.username !== localStorage.getItem('username') ? `<button onclick="removeUser(${ws.id}, ${m.id}, '${esc(m.username)}')" class="ml-1 text-slate-400 hover:text-rose-500 rounded-full focus:outline-none" title="Удалить из группы">&times;</button>` : ''}
                         </span>
                     `).join(' ');
 
                     listContainer.innerHTML += `
                     <div class="glass-panel rounded-2xl shadow-sm border border-slate-200 mb-2 transition-all duration-300">
-                        <div class="p-5 flex flex-col md:flex-row justify-between items-start md:items-center cursor-pointer select-none hover:bg-slate-50/50 transition-colors" onclick="toggleAccordion(${ws.id})">
+                        <div class="p-5 flex flex-col md:flex-row justify-between items-start md:items-center cursor-pointer select-none hover:bg-slate-50/50 transition-colors" onclick="toggleAccordion(${ws.id}, event)">
                             <div class="flex items-center gap-4 mb-4 md:mb-0">
                                 <div id="ws-chevron-${ws.id}" class="text-slate-400 chevron ${chevronClass}">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -487,9 +572,9 @@
                                     <div class="mt-2 flex flex-wrap gap-2">${membersHtml}</div>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-3 w-full md:w-auto" onclick="stopProp(event)">
-                                ${ws.is_owner ? `<button onclick="stopProp(event); openInviteModal(${ws.id})" class="flex-1 md:flex-none btn-neon-green px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg> Юзер</button>` : ''}
-                                ${ws.is_owner ? `<button onclick="stopProp(event); openAddServerModal(${ws.id})" class="flex-1 md:flex-none btn-neon-blue px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg> Сервер</button>` : ''}
+                            <div class="flex items-center gap-3 w-full md:w-auto">
+                                ${ws.is_owner ? `<button onclick="openInviteModal(${ws.id})" class="flex-1 md:flex-none btn-neon-green px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg> Юзер</button>` : ''}
+                                ${ws.is_owner ? `<button onclick="openAddServerModal(${ws.id})" class="flex-1 md:flex-none btn-neon-blue px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg> Сервер</button>` : ''}
                             </div>
                         </div>
                         <div id="ws-body-${ws.id}" class="accordion-content bg-slate-50 border-t border-slate-200 ${bodyClass}">${serversHtml}</div>
@@ -498,12 +583,20 @@
             } catch (err) { console.error(err); }
         }
 
-        async function createGroup() { const name = document.getElementById('new-group-name').value; if(!name) return; setBtnLoading('btn-create-group', true); const res = await fetch(`${API_URL}/workspaces`, { method: 'POST', headers: getHeaders(), body: JSON.stringify({name}) }); setBtnLoading('btn-create-group', false); if(res.ok) closeModal('create-group-modal'); else showInfo('Ошибка', 'Сбой'); }
+        async function createGroup() { 
+            const name = document.getElementById('new-group-name').value.trim(); 
+            if(!name) return; 
+            if (currentWorkspaces.some(ws => ws.name.toLowerCase() === name.toLowerCase())) return showInfo("Внимание", "У вас уже есть группа с таким названием.");
+            setBtnLoading('btn-create-group', true); 
+            const res = await fetch(`${API_URL}/workspaces`, { method: 'POST', headers: getHeaders(), body: JSON.stringify({name}) }); 
+            setBtnLoading('btn-create-group', false); 
+            if(res.ok) closeModal('create-group-modal'); else showInfo('Ошибка', (await res.json()).detail); 
+        }
+
         function openRenameModal(id, currentName) { document.getElementById('rename-ws-id').value = id; document.getElementById('rename-group-name').value = currentName; openModal('rename-group-modal'); }
         async function renameGroup() { const id = document.getElementById('rename-ws-id').value, name = document.getElementById('rename-group-name').value; if(!name) return; setBtnLoading('btn-rename-group', true); const res = await fetch(`${API_URL}/workspaces/${id}`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify({name}) }); setBtnLoading('btn-rename-group', false); if(res.ok) closeModal('rename-group-modal'); else showInfo('Ошибка', (await res.json()).detail); }
         function deleteWorkspace(id, name) { showConfirm(`Группа "${name}" и серверы будут удалены. Продолжить?`, async () => { const res = await fetch(`${API_URL}/workspaces/${id}`, { method: 'DELETE', headers: getHeaders() }); if(res.ok) loadDashboard(false); else showInfo("Ошибка", (await res.json()).detail); }); }
         function leaveWorkspace(id, name) { showConfirm(`Покинуть группу "${name}"?`, async () => { const res = await fetch(`${API_URL}/workspaces/${id}/leave`, { method: 'DELETE', headers: getHeaders() }); if(res.ok) loadDashboard(false); else showInfo("Ошибка", (await res.json()).detail); }); }
-        
         function removeUser(wsId, userId, username) { showConfirm(`Удалить пользователя @${username} из группы?`, async () => { const res = await fetch(`${API_URL}/workspaces/${wsId}/members/${userId}`, { method: 'DELETE', headers: getHeaders() }); if(res.ok) loadDashboard(false); else showInfo("Ошибка", (await res.json()).detail); }); }
 
         function openInviteModal(wsId) { document.getElementById('invite-workspace-id').value = wsId; document.getElementById('invite-username').value = ''; document.getElementById('invite-link-container').classList.add('hidden'); openModal('invite-modal'); }
@@ -514,66 +607,39 @@
         function showAgentCommand(token) { document.getElementById('server-modal-step-1').classList.add('hidden'); document.getElementById('server-modal-step-2').classList.remove('hidden'); document.getElementById('install-command').innerText = `curl -sL https://inv.e-laba52.ru/agent.sh | sudo bash -s -- --token=${token}`; }
         function openRenameServerModal(id, currentHost) { document.getElementById('rename-server-id').value = id; document.getElementById('rename-server-name').value = currentHost; openModal('rename-server-modal'); }
         async function renameServer() { const id = document.getElementById('rename-server-id').value, name = document.getElementById('rename-server-name').value; if(!name) return; setBtnLoading('btn-rename-server', true); const res = await fetch(`${API_URL}/servers/${id}/rename`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify({hostname: name}) }); setBtnLoading('btn-rename-server', false); if(res.ok) closeModal('rename-server-modal'); else showInfo('Ошибка', (await res.json()).detail); }
-        function openMoveModal(serverId, currentWsId) { const select = document.getElementById('move-target-ws'); select.innerHTML = currentWorkspaces.filter(ws => ws.id !== currentWsId && ws.is_owner).map(ws => `<option value="${ws.id}">${ws.name}</option>`).join(''); if(select.innerHTML === '') return showInfo("Недоступно", "Вы не являетесь владельцем других групп для переноса."); document.getElementById('move-server-id').value = serverId; openModal('move-server-modal'); }
-        async function moveServer() { const serverId = document.getElementById('move-server-id').value, targetWsId = document.getElementById('move-target-ws').value; setBtnLoading('btn-move-server', true); const res = await fetch(`${API_URL}/servers/${serverId}/move`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify({target_workspace_id: parseInt(targetWsId)}) }); setBtnLoading('btn-move-server', false); if(res.ok) closeModal('move-server-modal'); else showInfo("Ошибка", (await res.json()).detail); }
+        
+        function openMoveModal(serverId, currentWsId) { 
+            const select = document.getElementById('move-target-ws'); 
+            select.innerHTML = currentWorkspaces.filter(ws => ws.id !== currentWsId && ws.is_owner).map(ws => `<option value="${ws.id}">${ws.name}</option>`).join(''); 
+            if(select.innerHTML === '') return showInfo("Недоступно", "Вы не являетесь владельцем других групп для переноса."); 
+            document.getElementById('move-server-id').value = serverId; 
+            openModal('move-server-modal'); 
+        }
+        async function moveServer() { const serverId = parseInt(document.getElementById('move-server-id').value); const targetWsId = parseInt(document.getElementById('move-target-ws').value); setBtnLoading('btn-move-server', true); const res = await fetch(`${API_URL}/servers/${serverId}/move`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify({target_workspace_id: targetWsId}) }); setBtnLoading('btn-move-server', false); if(res.ok) closeModal('move-server-modal'); else showInfo("Ошибка", (await res.json()).detail); }
         function deleteServer(id, hostname) { showConfirm(`Удалить сервер ${hostname}?`, async () => { const res = await fetch(`${API_URL}/servers/${id}`, { method: 'DELETE', headers: getHeaders() }); if(res.ok) loadDashboard(false); else showInfo("Ошибка", "Сбой удаления."); }); }
 
-        // --- МОНИТОРИНГ И ЛОГИ ---
-        function viewMonitoring(id, hostname, ip) {
-            currentMonServerId = id;
-            document.getElementById('mon-hostname').innerText = hostname;
-            document.getElementById('mon-ip').innerText = ip;
-            switchMonTab('syslog');
-            openModal('monitoring-modal');
-        }
-
+        // --- МОНИТОРИНГ ---
+        function viewMonitoring(id, hostname, ip) { currentMonServerId = id; document.getElementById('mon-hostname').innerText = hostname; document.getElementById('mon-ip').innerText = ip; switchMonTab('syslog'); openModal('monitoring-modal'); }
         function switchMonTab(tabName) {
             currentMonJob = tabName;
-            ['metrics', 'syslog', 'docker'].forEach(t => {
-                document.getElementById(`tab-mon-${t}`).className = `px-4 py-2 rounded-lg text-sm font-semibold border transition-colors flex items-center gap-2 ${t === tabName ? 'tab-active' : 'tab-inactive'}`;
-                document.getElementById(`content-mon-${t}`).classList.toggle('hidden', t !== tabName);
-            });
-            
+            ['metrics', 'syslog', 'docker'].forEach(t => { document.getElementById(`tab-mon-${t}`).className = `px-4 py-2 rounded-lg text-sm font-semibold border transition-colors flex items-center gap-2 ${t === tabName ? 'tab-active' : 'tab-inactive'}`; document.getElementById(`content-mon-${t}`).classList.toggle('hidden', t !== tabName); });
             if(logPollingInterval) clearInterval(logPollingInterval);
-            
-            if (tabName === 'syslog' || tabName === 'docker') {
-                const actualJob = tabName === 'syslog' ? 'varlogs' : 'docker';
-                fetchLogs(actualJob);
-                logPollingInterval = setInterval(() => fetchLogs(actualJob), 3000);
-            }
+            if (tabName === 'syslog' || tabName === 'docker') { const actualJob = tabName === 'syslog' ? 'varlogs' : 'docker'; fetchLogs(actualJob); logPollingInterval = setInterval(() => fetchLogs(actualJob), 3000); }
         }
-
         async function fetchLogs(jobName) {
             if(!currentMonServerId) return;
             const containerId = jobName === 'docker' ? 'docker-feed' : 'syslog-feed';
             const container = document.getElementById(containerId);
-            
             try {
                 const res = await fetch(`${API_URL}/servers/${currentMonServerId}/logs?job=${jobName}`, { headers: getHeaders() });
                 if (!res.ok) throw new Error();
                 const data = await res.json();
-                
                 if (data.status === 'ok' && data.logs && data.logs.length > 0) {
-                    let html = '';
-                    data.logs.forEach(log => {
-                        const date = new Date(parseInt(log.ts) / 1000000).toLocaleString();
-                        html += `<div class="log-line"><span class="text-slate-500">[${date}]</span> <span class="text-slate-300">${esc(log.line)}</span></div>`;
-                    });
-                    
-                    const parent = container.parentElement;
-                    const isAtBottom = parent.scrollHeight - parent.scrollTop <= parent.clientHeight + 50;
-                    
-                    container.innerHTML = html;
-                    
-                    if (isAtBottom) parent.scrollTop = parent.scrollHeight;
-                } else if (data.status === 'ok') {
-                    container.innerHTML = `<div class="text-slate-500 italic py-2">> Ожидание потока логов от агента...</div>`;
-                } else {
-                    container.innerHTML = `<div class="text-rose-400 py-2">> Ошибка: ${data.detail}</div>`;
-                }
-            } catch (err) {
-                // Молчим при ошибке опроса
-            }
+                    let html = ''; data.logs.forEach(log => { html += `<div class="log-line"><span class="text-slate-500">[${new Date(parseInt(log.ts) / 1000000).toLocaleString()}]</span> <span class="text-slate-800">${esc(log.line)}</span></div>`; });
+                    const parent = container.parentElement; const isAtBottom = parent.scrollHeight - parent.scrollTop <= parent.clientHeight + 50;
+                    container.innerHTML = html; if (isAtBottom) parent.scrollTop = parent.scrollHeight;
+                } else if (data.status === 'ok') { container.innerHTML = `<div class="text-slate-500 italic py-2">> Ожидание логов...</div>`; }
+            } catch (err) {}
         }
 
         function exportData() { fetch('/api/export', { headers: getHeaders() }).then(r => r.blob()).then(b => { const u = window.URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = "backup.json"; document.body.appendChild(a); a.click(); a.remove(); }); }
