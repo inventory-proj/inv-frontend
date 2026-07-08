@@ -76,7 +76,6 @@
 </head>
 <body class="antialiased relative selection:bg-blue-500/20">
 
-    <!-- ФОНОВЫЕ ГРАДИЕНТЫ -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none -z-20">
         <div class="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-300/30 rounded-full mix-blend-multiply filter blur-[100px] animate-blob"></div>
         <div class="absolute top-[20%] right-[-10%] w-[500px] h-[500px] bg-emerald-300/30 rounded-full mix-blend-multiply filter blur-[100px] animate-blob" style="animation-delay: 2s;"></div>
@@ -156,7 +155,7 @@
             </div>
         </main>
 
-        <!-- РЕЖИМ 2: АДМИНКА (Скрыта по умолчанию) -->
+        <!-- РЕЖИМ 2: АДМИНКА -->
         <main id="admin-view" class="hidden flex-1 w-full max-w-[1400px] mx-auto px-4 sm:px-6 py-8">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
                 <div>
@@ -182,7 +181,6 @@
                             </tr>
                         </thead>
                         <tbody id="admin-users-list" class="divide-y divide-slate-100">
-                            <!-- Генерируется через JS -->
                         </tbody>
                     </table>
                 </div>
@@ -190,7 +188,7 @@
         </main>
     </div>
 
-    <!-- ================= МОДАЛКИ (Без закрытия по фону!) ================= -->
+    <!-- ================= МОДАЛКИ ================= -->
 
     <!-- Мониторинг (Терминал) -->
     <div id="monitoring-modal" class="glass-modal-overlay" style="z-index: 50;">
@@ -317,9 +315,40 @@
         </div>
     </div>
 
-    <!-- Перенос сервера -->
+    <!-- Перенос сервера (С галочками делегирования) -->
     <div id="move-server-modal" class="glass-modal-overlay" style="z-index: 50;">
-        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Перенос сервера</h3><button onclick="closeModal('move-server-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div><input type="hidden" id="move-server-id"><select id="move-target-ws" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 mb-6 focus:outline-none focus:border-amber-500"></select>
+        <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-slate-900">Перенос сервера</h3>
+                <button onclick="closeModal('move-server-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
+            </div>
+            
+            <input type="hidden" id="move-server-id">
+            
+            <div class="mb-4">
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Выберите группу</label>
+                <select id="move-target-ws" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:border-amber-500"></select>
+            </div>
+
+            <!-- Блок галочек (Показывается только создателю сервера) -->
+            <div id="delegation-options" class="mb-6 hidden bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <p class="text-sm font-bold text-slate-800 mb-3">Права нового владельца:</p>
+                <div class="space-y-3">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" id="del-can-delete" class="w-4 h-4 text-amber-500 rounded border-slate-300 focus:ring-amber-500">
+                        <span class="text-sm text-slate-700 font-medium">Может удалить сервер</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" id="del-can-rename" class="w-4 h-4 text-amber-500 rounded border-slate-300 focus:ring-amber-500">
+                        <span class="text-sm text-slate-700 font-medium">Может переименовать</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" id="del-can-view-agent" class="w-4 h-4 text-amber-500 rounded border-slate-300 focus:ring-amber-500">
+                        <span class="text-sm text-slate-700 font-medium">Видит токен агента</span>
+                    </label>
+                </div>
+            </div>
+
             <div class="flex gap-3">
                 <button onclick="closeModal('move-server-modal')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 rounded-xl transition-all border border-slate-200">Отмена</button>
                 <button id="btn-move-server" onclick="moveServer()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-white font-bold py-3 rounded-xl shadow-md">Перенести</button>
@@ -550,20 +579,29 @@
                                 let badgeClass = s.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200';
                                 let dotClass = s.status === 'active' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-slate-400';
                                 
-                                // Логика отрисовки кнопок сервера:
+                                // Логика кнопок на основе ответов RBAC с бэкенда
                                 let serverControls = `<button onclick="viewMonitoring(${s.id}, '${esc(s.hostname)}', '${s.ip_address}')" class="flex items-center gap-1.5 btn-neon-blue px-3 py-1.5 rounded-lg text-xs font-bold" title="Метрики и Логи">${iconLog} Логи</button>`;
                                 
-                                // Агент видит ТОЛЬКО создатель сервера
-                                if (s.is_creator) {
-                                    serverControls += `\n<button onclick="showAgentCommand('${s.agent_token}')" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all" title="Команда агента">${iconAgent} Агент</button>`;
+                                if (s.can_view_agent) {
+                                    serverControls += `\n<button onclick="showAgentCommand('${s.agent_token}')" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ml-1.5" title="Команда агента">${iconAgent} Агент</button>`;
                                 }
                                 
-                                // Перемещение, переименование и удаление видит ТОЛЬКО владелец текущей группы
-                                if (ws.is_owner) {
-                                    serverControls += `\n<div class="w-px h-4 bg-slate-200 mx-1"></div>
-                                    <button onclick="openMoveModal(${s.id}, ${ws.id})" class="p-1.5 btn-neon-amber rounded-lg" title="Переместить">${iconMove}</button>
-                                    <button onclick="openRenameServerModal(${s.id}, '${esc(s.hostname)}')" class="p-1.5 btn-neon-blue rounded-lg" title="Изменить имя">${iconEdit}</button>
-                                    <button onclick="deleteServer(${s.id}, '${esc(s.hostname)}')" class="p-1.5 btn-neon-red rounded-lg" title="Удалить">${iconTrash}</button>`;
+                                // Ставим разделитель, если будут еще кнопки
+                                if (s.can_delete || s.can_rename || ws.is_owner || s.is_creator) {
+                                    serverControls += `\n<div class="w-px h-4 bg-slate-200 mx-1.5"></div>`;
+                                }
+
+                                // Перемещение доступно Владельцу группы ИЛИ Создателю сервера
+                                if (ws.is_owner || s.is_creator) {
+                                    serverControls += `\n<button onclick="openMoveModal(${s.id}, ${ws.id}, ${s.is_creator})" class="p-1.5 btn-neon-amber rounded-lg mr-1.5" title="Переместить">${iconMove}</button>`;
+                                }
+                                
+                                if (s.can_rename) {
+                                    serverControls += `\n<button onclick="openRenameServerModal(${s.id}, '${esc(s.hostname)}')" class="p-1.5 btn-neon-blue rounded-lg mr-1.5" title="Изменить имя">${iconEdit}</button>`;
+                                }
+                                
+                                if (s.can_delete) {
+                                    serverControls += `\n<button onclick="deleteServer(${s.id}, '${esc(s.hostname)}')" class="p-1.5 btn-neon-red rounded-lg" title="Удалить">${iconTrash}</button>`;
                                 }
 
                                 return `
@@ -572,7 +610,7 @@
                                     <td class="px-6 py-4 font-mono text-slate-500">${s.ip_address}</td>
                                     <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-md text-xs font-bold border ${badgeClass}">${s.status.toUpperCase()}</span></td>
                                     <td class="px-6 py-4 text-right">
-                                        <div class="flex items-center justify-end gap-1.5" onclick="stopProp(event)">
+                                        <div class="flex items-center justify-end" onclick="stopProp(event)">
                                             ${serverControls}
                                         </div>
                                     </td>
@@ -669,22 +707,47 @@
         function openRenameServerModal(id, currentHost) { document.getElementById('rename-server-id').value = id; document.getElementById('rename-server-name').value = currentHost; openModal('rename-server-modal'); }
         async function renameServer() { const id = document.getElementById('rename-server-id').value, name = document.getElementById('rename-server-name').value; if(!name) return; setBtnLoading('btn-rename-server', true); const res = await fetch(`${API_URL}/servers/${id}/rename`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify({hostname: name}) }); setBtnLoading('btn-rename-server', false); if(res.ok) closeModal('rename-server-modal'); else showInfo('Ошибка', (await res.json()).detail); }
         
-        function openMoveModal(serverId, currentWsId) { 
+        function openMoveModal(serverId, currentWsId, isCreator) { 
             const select = document.getElementById('move-target-ws'); 
             // Разрешаем перенос в любую группу, ГДЕ ЮЗЕР ПРОСТО СОСТОИТ
             select.innerHTML = currentWorkspaces.filter(ws => ws.id !== currentWsId).map(ws => `<option value="${ws.id}">${ws.name}</option>`).join(''); 
             if(select.innerHTML === '') return showInfo("Недоступно", "Вы не состоите в других группах для переноса."); 
+            
             document.getElementById('move-server-id').value = serverId; 
+            
+            // Если переносит создатель - показываем ему галочки
+            const delBlock = document.getElementById('delegation-options');
+            if (isCreator) {
+                delBlock.classList.remove('hidden');
+                document.getElementById('del-can-delete').checked = false;
+                document.getElementById('del-can-rename').checked = false;
+                document.getElementById('del-can-view-agent').checked = false;
+            } else {
+                delBlock.classList.add('hidden');
+            }
+
             openModal('move-server-modal'); 
         }
+        
         async function moveServer() { 
             const serverId = parseInt(document.getElementById('move-server-id').value);
             const targetWsId = parseInt(document.getElementById('move-target-ws').value); 
+            
+            // Собираем значения галочек (летят в JSON)
+            const payload = {
+                target_workspace_id: targetWsId,
+                delegated_can_delete: document.getElementById('del-can-delete').checked,
+                delegated_can_rename: document.getElementById('del-can-rename').checked,
+                delegated_can_view_agent: document.getElementById('del-can-view-agent').checked
+            };
+
             setBtnLoading('btn-move-server', true); 
-            const res = await fetch(`${API_URL}/servers/${serverId}/move`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify({target_workspace_id: targetWsId}) }); 
+            const res = await fetch(`${API_URL}/servers/${serverId}/move`, { method: 'PUT', headers: getHeaders(), body: JSON.stringify(payload) }); 
             setBtnLoading('btn-move-server', false); 
+            
             if(res.ok) closeModal('move-server-modal'); else showInfo("Ошибка переноса", (await res.json()).detail); 
         }
+        
         function deleteServer(id, hostname) { showConfirm(`Удалить сервер ${hostname}?`, async () => { const res = await fetch(`${API_URL}/servers/${id}`, { method: 'DELETE', headers: getHeaders() }); if(res.ok) loadDashboard(false); else showInfo("Ошибка", "Сбой удаления."); }); }
 
         // --- МОНИТОРИНГ ---
