@@ -31,16 +31,19 @@
             background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(226, 232, 240, 0.8); box-shadow: 0 10px 40px -10px rgba(148, 163, 184, 0.1);
         }
-        /* Оверлей БЕЗ pointer-events: auto на фоне, чтобы клик мимо не закрывал окно */
+        
+        /* Исправлен баг с перекрытием кнопок невидимыми окнами */
         .glass-modal-overlay {
-            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px);
-            display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+            position: fixed; inset: 0; z-index: 50; 
+            background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px);
+            display: flex; justify-content: center; align-items: center; 
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
-        /* Включаем клики только внутри самого окна */
         .glass-modal-overlay.active { opacity: 1; pointer-events: auto; }
         .glass-modal-content {
-            background: #ffffff; border: 1px solid #e2e8f0; transform: scale(0.95) translateY(10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); max-height: 90vh; overflow-y: auto; pointer-events: auto;
+            background: #ffffff; border: 1px solid #e2e8f0; 
+            transform: scale(0.95) translateY(10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); max-height: 90vh; overflow-y: auto; 
         }
         .glass-modal-overlay.active .glass-modal-content { transform: scale(1) translateY(0); }
 
@@ -193,7 +196,7 @@
     <!-- ================= МОДАЛКИ (Без закрытия по клику на фон) ================= -->
 
     <!-- Мониторинг (Терминал) -->
-    <div id="monitoring-modal" class="glass-modal-overlay" style="z-index: 50;">
+    <div id="monitoring-modal" class="glass-modal-overlay">
         <div class="glass-modal-content rounded-2xl w-full max-w-5xl overflow-hidden shadow-2xl flex flex-col h-[85vh]">
             <div class="bg-slate-50 border-b border-slate-200 p-4 flex justify-between items-center shrink-0">
                 <div class="flex items-center gap-3">
@@ -245,7 +248,7 @@
     </div>
 
     <!-- Новая группа -->
-    <div id="create-group-modal" class="glass-modal-overlay" style="z-index: 50;">
+    <div id="create-group-modal" class="glass-modal-overlay">
         <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md">
             <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Новая группа</h3><button onclick="closeModal('create-group-modal')" class="text-slate-400 hover:text-slate-600 transition-colors"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
             <input type="text" id="new-group-name" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 mb-6 focus:outline-none focus:border-blue-500" placeholder="Название (например: Backend Team)">
@@ -257,7 +260,7 @@
     </div>
 
     <!-- Переименовать группу -->
-    <div id="rename-group-modal" class="glass-modal-overlay" style="z-index: 50;">
+    <div id="rename-group-modal" class="glass-modal-overlay">
         <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md">
             <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Переименовать группу</h3><button onclick="closeModal('rename-group-modal')" class="text-slate-400 hover:text-slate-600 transition-colors"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
             <input type="hidden" id="rename-ws-id">
@@ -270,7 +273,7 @@
     </div>
 
     <!-- Добавить сервер -->
-    <div id="server-modal" class="glass-modal-overlay" style="z-index: 50;">
+    <div id="server-modal" class="glass-modal-overlay">
         <div class="glass-modal-content p-6 rounded-2xl w-full max-w-lg">
             <div class="flex justify-between items-center mb-6"><h3 id="server-modal-title" class="text-xl font-bold text-slate-900">Добавление сервера</h3><button onclick="closeModal('server-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
             <div id="server-modal-step-1" class="space-y-4">
@@ -282,27 +285,32 @@
                     <button id="btn-create-server" onclick="createServer()" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl shadow-md">Добавить</button>
                 </div>
             </div>
-            <!-- Вывод команды сразу после создания -->
             <div id="server-modal-step-2" class="hidden">
                 <p class="text-slate-600 mb-3 text-sm font-medium">Сервер создан! Команда для <code class="bg-slate-100 text-rose-500 px-1.5 py-0.5 rounded border border-slate-200">root</code>:</p>
                 <div class="relative bg-slate-900 p-4 rounded-xl font-mono text-sm text-blue-300 break-all mb-4" id="install-command"></div>
-                <button onclick="copyText('install-command', 'Команда скопирована!')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl shadow-md transition-all">Скопировать команду</button>
+                <div class="flex gap-3">
+                    <button onclick="closeModal('server-modal')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 rounded-xl transition-all border border-slate-200">Закрыть</button>
+                    <button onclick="copyText('install-command', 'Команда скопирована!')" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl shadow-md">Скопировать</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Команда агента (Отдельное независимое окно) -->
-    <div id="agent-modal" class="glass-modal-overlay" style="z-index: 50;">
+    <!-- Команда агента (Отдельное окно) -->
+    <div id="agent-modal" class="glass-modal-overlay">
         <div class="glass-modal-content p-6 rounded-2xl w-full max-w-lg">
             <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Скрипт Агента</h3><button onclick="closeModal('agent-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
             <p class="text-slate-600 mb-3 text-sm font-medium">Выполните команду на сервере от имени <code class="bg-slate-100 text-rose-500 px-1.5 py-0.5 rounded border border-slate-200">root</code>:</p>
             <div class="relative bg-slate-900 p-4 rounded-xl font-mono text-sm text-blue-300 break-all mb-6" id="agent-command-text"></div>
-            <button onclick="copyText('agent-command-text', 'Команда скопирована!')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl shadow-md transition-all">Скопировать</button>
+            <div class="flex gap-3">
+                <button onclick="closeModal('agent-modal')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 rounded-xl transition-all border border-slate-200">Закрыть</button>
+                <button onclick="copyText('agent-command-text', 'Команда скопирована!')" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl shadow-md transition-all">Скопировать</button>
+            </div>
         </div>
     </div>
 
     <!-- Переименовать сервер -->
-    <div id="rename-server-modal" class="glass-modal-overlay" style="z-index: 50;">
+    <div id="rename-server-modal" class="glass-modal-overlay">
         <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Имя сервера</h3><button onclick="closeModal('rename-server-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div><input type="hidden" id="rename-server-id"><input type="text" id="rename-server-name" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 mb-6 focus:outline-none focus:border-blue-500">
             <div class="flex gap-3">
                 <button onclick="closeModal('rename-server-modal')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 rounded-xl transition-all border border-slate-200">Отмена</button>
@@ -312,7 +320,7 @@
     </div>
 
     <!-- Перенос сервера (С галочками делегирования) -->
-    <div id="move-server-modal" class="glass-modal-overlay" style="z-index: 50;">
+    <div id="move-server-modal" class="glass-modal-overlay">
         <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-bold text-slate-900">Перенос сервера</h3>
@@ -326,7 +334,6 @@
                 <select id="move-target-ws" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:border-amber-500"></select>
             </div>
 
-            <!-- Блок галочек (Показывается только создателю сервера) -->
             <div id="delegation-options" class="mb-6 hidden bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <p class="text-sm font-bold text-slate-800 mb-3">Права нового владельца:</p>
                 <div class="space-y-3">
@@ -353,13 +360,13 @@
     </div>
 
     <!-- Добавить участника -->
-    <div id="invite-modal" class="glass-modal-overlay" style="z-index: 50;">
+    <div id="invite-modal" class="glass-modal-overlay">
         <div class="glass-modal-content p-6 rounded-2xl w-full max-w-md">
             <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-900">Добавить участника</h3><button onclick="closeModal('invite-modal')" class="text-slate-400 hover:text-slate-600"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button></div>
             <input type="hidden" id="invite-workspace-id">
             <div class="flex gap-2 mb-2"><input type="text" id="invite-username" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 focus:outline-none focus:border-emerald-500" placeholder="@username"><button id="btn-invite" onclick="inviteColleague()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 rounded-xl">Найти</button></div>
             <div id="invite-link-container" class="hidden mt-6 bg-emerald-50 p-4 rounded-xl border border-emerald-100"><p class="text-emerald-700 text-sm font-semibold mb-3">Ссылка-приглашение:</p>
-                <div class="flex gap-2"><div class="flex-1 bg-white border border-emerald-200 p-3 rounded-lg font-mono text-xs break-all select-all" id="invite-link-text"></div><button onclick="copyText('invite-link-text', 'Ссылка скопирована!')" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-semibold px-4 rounded-lg transition-colors border border-emerald-200" title="Копировать"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg></button></div>
+                <div class="flex gap-2"><div class="flex-1 bg-white border border-emerald-200 p-3 rounded-lg font-mono text-xs break-all select-all" id="invite-link-text"></div><button onclick="copyText('invite-link-text', 'Ссылка скопирована!')" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-semibold px-4 rounded-lg transition-colors border border-emerald-200" title="Копировать"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg></button></div>
             </div>
         </div>
     </div>
@@ -403,6 +410,9 @@
 
         const esc = str => str ? str.replace(/'/g, "\\'").replace(/"/g, "&quot;") : '';
 
+        // Останавливаем всплытие клика, чтобы кнопки серверов не открывали аккордеон
+        function stopProp(e) { if(e) e.stopPropagation(); }
+
         function showInfo(title, msg) { document.getElementById('info-title').innerText = title; document.getElementById('info-msg').innerText = msg; openModal('info-modal'); }
         function showConfirm(msg, actionFn) { document.getElementById('confirm-msg').innerText = msg; document.getElementById('confirm-action-btn').onclick = () => { actionFn(); closeModal('confirm-modal'); }; openModal('confirm-modal'); }
         function openModal(id) { document.getElementById(id).classList.add('active'); }
@@ -417,7 +427,11 @@
             }
         }
         function setBtnLoading(btnId, isLoading) { const btn = document.getElementById(btnId); if (isLoading) btn.classList.add('btn-loading'); else btn.classList.remove('btn-loading'); }
-        function copyText(id, msg) { navigator.clipboard.writeText(document.getElementById(id).innerText).then(()=>showInfo("Успех", msg)).catch(()=>showInfo("Ошибка", "Скопируйте вручную")); }
+        function copyText(elementId, successMsg) { 
+            navigator.clipboard.writeText(document.getElementById(elementId).innerText)
+                .then(()=>showInfo("Успех", successMsg))
+                .catch(()=>showInfo("Ошибка", "Скопируйте текст вручную")); 
+        }
 
         function switchAuthTab(tab) {
             const isL = tab === 'login';
@@ -513,7 +527,6 @@
         }
 
         function toggleAccordion(id, event) {
-            // Игнорируем клик, если он был по кнопке в заголовке
             if (event && event.target && event.target.closest('button')) return;
             
             const body = document.getElementById(`ws-body-${id}`), chevron = document.getElementById(`ws-chevron-${id}`);
@@ -558,10 +571,10 @@
                     const bodyClass = isOpen ? 'expanded' : '';
 
                     let groupControls = ws.is_owner ? `
-                        <button onclick="openRenameModal(${ws.id}, '${esc(ws.name)}')" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Переименовать">${iconEdit}</button>
-                        <button onclick="deleteWorkspace(${ws.id}, '${esc(ws.name)}')" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all" title="Удалить группу">${iconTrash}</button>
+                        <button onclick="stopProp(event); openRenameModal(${ws.id}, '${esc(ws.name)}')" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Переименовать">${iconEdit}</button>
+                        <button onclick="stopProp(event); deleteWorkspace(${ws.id}, '${esc(ws.name)}')" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all" title="Удалить группу">${iconTrash}</button>
                     ` : `
-                        <button onclick="leaveWorkspace(${ws.id}, '${esc(ws.name)}')" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all" title="Покинуть группу">${iconLeave}</button>
+                        <button onclick="stopProp(event); leaveWorkspace(${ws.id}, '${esc(ws.name)}')" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all" title="Покинуть группу">${iconLeave}</button>
                     `;
                     
                     let serversHtml = ws.servers.length === 0 
@@ -574,7 +587,7 @@
                                 let badgeClass = s.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-slate-100 text-slate-600 border-slate-200';
                                 let dotClass = s.status === 'active' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-slate-400';
                                 
-                                // Динамические кнопки на основе RBAC
+                                // Динамические кнопки (RBAC)
                                 let serverControls = `<button onclick="viewMonitoring(${s.id}, '${esc(s.hostname)}', '${s.ip_address}')" class="flex items-center gap-1.5 btn-neon-blue px-3 py-1.5 rounded-lg text-xs font-bold" title="Метрики и Логи">${iconLog} Логи</button>`;
                                 
                                 if (s.can_view_agent) {
@@ -702,7 +715,6 @@
         
         function openMoveModal(serverId, currentWsId, isCreator) { 
             const select = document.getElementById('move-target-ws'); 
-            // Исключаем текущую группу из списка для переноса
             select.innerHTML = currentWorkspaces.filter(ws => ws.id !== currentWsId).map(ws => `<option value="${ws.id}">${ws.name}</option>`).join(''); 
             if(select.innerHTML === '') return showInfo("Недоступно", "Вы не состоите в других группах для переноса."); 
             
